@@ -48,6 +48,7 @@
     </div>
 </v-topbar>
 
+
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.top.after') !!}
 
 @pushOnce('scripts')

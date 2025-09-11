@@ -1,104 +1,65 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.before') !!}
 
-<div class="flex min-h-[78px] w-full justify-between border border-b border-l-0 border-r-0 border-t-0 px-[60px] max-1180:px-8">
-    <!--
-        This section will provide categories for the first, second, and third levels. If
-        additional levels are required, users can customize them according to their needs.
-    -->
-    <!-- Left Nagivation Section -->
-    <div class="flex items-center gap-x-10 max-[1180px]:gap-x-5">
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
-
+<div class="sticky top-0 z-50 bg-white/90 border-b border-slate-100 w-full min-h-[78px] max-[1180px]:px-8 container">
+    <div class="mx-auto max-w-7xl px-4">
+        <div class="flex h-16 items-center justify-between gap-3">
         <a
+            class="relative flex"
             href="{{ route('shop.home.index') }}"
             aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.bagisto')"
         >
-            <img
-                src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                width="131"
-                height="29"
-                alt="{{ config('app.name') }}"
-            >
-        </a>
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.category.before') !!}
-
-        <v-desktop-category>
-            <div class="flex items-center gap-5">
-                <span
-                    class="shimmer h-6 w-20 rounded"
-                    role="presentation"
-                ></span>
-
-                <span
-                    class="shimmer h-6 w-20 rounded"
-                    role="presentation"
-                ></span>
-
-                <span
-                    class="shimmer h-6 w-20 rounded"
-                    role="presentation"
-                ></span>
+            <img src="/logo.png" alt="True Cloud" class="h-12 w-auto" style="margin-right: 10px;" >
+            <div class="block">
+                <div class="text-xl font-extrabold tracking-tight text-slate-900">True Cloud</div>
+                <div class="text-xs text-slate-500 font-medium">EST. 2015</div>
             </div>
-        </v-desktop-category>
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.category.after') !!}
-    </div>
-
-    <!-- Right Nagivation Section -->
-    <div class="flex items-center gap-x-9 max-[1100px]:gap-x-6 max-lg:gap-x-8">
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.before') !!}
-
-        <!-- Search Bar Container -->
-        <div class="relative w-full">
-            <form
-                action="{{ route('shop.search.index') }}"
-                class="flex max-w-[445px] items-center"
-                role="search"
-            >
-                <label
-                    for="organic-search"
-                    class="sr-only"
-                >
-                    @lang('shop::app.components.layouts.header.desktop.bottom.search')
-                </label>
-
-                <div class="icon-search pointer-events-none absolute top-2.5 flex items-center text-xl ltr:left-3 rtl:right-3"></div>
-
-                <input
-                    type="text"
-                    name="query"
-                    value="{{ request('query') }}"
-                    class="block w-full rounded-lg border border-transparent bg-zinc-100 px-11 py-3 text-xs font-medium text-gray-900 transition-all hover:border-gray-400 focus:border-gray-400"
-                    minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
-                    maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
-                    placeholder="@lang('shop::app.components.layouts.header.desktop.bottom.search-text')"
-                    aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.search-text')"
-                    aria-required="true"
-                    pattern="[^\\]+"
-                    required
-                >
-
-                <button
-                    type="submit"
-                    class="hidden"
-                    aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.submit')"
-                >
-                </button>
-
-                @if (core()->getConfigData('catalog.products.settings.image_search'))
-                    @include('shop::search.images.index')
-                @endif
-            </form>
-        </div>
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.after') !!}
-
+        </a>
         <!-- Right Navigation Links -->
         <div class="mt-1.5 flex gap-x-8 max-[1100px]:gap-x-6 max-lg:gap-x-8">
+            <div class="hidden flex-1 items-center lg:flex">
+                <!-- Search Bar Container -->
+                <div class="relative w-full">
+                    <form
+                        action="{{ route('shop.search.index') }}"
+                        class="flex max-w-[445px] items-center"
+                        role="search"
+                    >
+                        <label
+                            for="organic-search"
+                            class="sr-only"
+                        >
+                            @lang('shop::app.components.layouts.header.desktop.bottom.search')
+                        </label>
+
+                        <div class="icon-search pointer-events-none absolute top-2.5 flex items-center text-xl ltr:left-3 rtl:right-3"></div>
+
+                        <input
+                            type="text"
+                            name="query"
+                            value="{{ request('query') }}"
+                            class="block w-full rounded-lg border border-transparent bg-zinc-100 px-11 py-3 text-xs font-medium text-gray-900 transition-all hover:border-gray-400 focus:border-gray-400"
+                            minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
+                            maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
+                            placeholder="@lang('shop::app.components.layouts.header.desktop.bottom.search-text')"
+                            aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.search-text')"
+                            aria-required="true"
+                            pattern="[^\\]+"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="hidden"
+                            aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.submit')"
+                        >
+                        </button>
+
+                        @if (core()->getConfigData('catalog.products.settings.image_search'))
+                            @include('shop::search.images.index')
+                        @endif
+                    </form>
+                </div>
+            </div>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.compare.before') !!}
 
@@ -247,9 +208,48 @@
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.profile.after') !!}
         </div>
+        </div>
+
+        <!-- Desktop nav -->
+        <v-desktop-category>
+            <div class="flex items-center gap-5">
+                <span
+                    class="shimmer h-6 w-20 rounded"
+                    role="presentation"
+                ></span>
+
+                <span
+                    class="shimmer h-6 w-20 rounded"
+                    role="presentation"
+                ></span>
+
+                <span
+                    class="shimmer h-6 w-20 rounded"
+                    role="presentation"
+                ></span>
+            </div>
+        </v-desktop-category>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden border-t border-slate-100 bg-white lg:hidden">
+        <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="mb-3">
+            <input class="w-full rounded-2xl border border-slate-200 bg-slate-50/60 py-2.5 px-3 outline-none ring-primary/20 focus:ring-2" placeholder="Пошук по каталогу…" />
+        </div>
+        <ul class="grid grid-cols-2 gap-3 text-[15px] font-medium">
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=hookahs">Кальяни</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=tobacco">Тютюн</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=coal">Вугілля</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=bowls">Чаші</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=hoses">Шланги</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=accessories">Аксесуари</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=kits">Набори</a></li>
+            <li><a class="block rounded-xl bg-slate-50 p-3" href="?sale=1">Знижки</a></li>
+        </ul>
+        </div>
     </div>
 </div>
-
 @pushOnce('scripts')
     <script
         type="text/x-template"
@@ -275,59 +275,52 @@
                 role="presentation"
             ></span>
         </div>
-
-        <!-- Default category layout -->
-        <div
-            class="flex items-center"
-            v-else-if="'{{ core()->getConfigData('general.design.categories.category_view') }}' !== 'sidebar'"
-        >
-            <div
-                class="group relative flex h-[77px] items-center border-b-4 border-transparent hover:border-b-4 hover:border-navyBlue"
-                v-for="category in categories"
-            >
-                <span>
-                    <a
-                        :href="category.url"
-                        class="inline-block px-5 uppercase"
-                    >
-                        @{{ category.name }}
-                    </a>
-                </span>
-
-                <div
-                    class="pointer-events-none absolute top-[78px] z-[1] max-h-[580px] w-max max-w-[1260px] translate-y-1 overflow-auto overflow-x-auto border border-b-0 border-l-0 border-r-0 border-t border-[#F3F3F3] bg-white p-9 opacity-0 shadow-[0_6px_6px_1px_rgba(0,0,0,.3)] transition duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-hover:duration-200 group-hover:ease-in ltr:-left-9 rtl:-right-9"
-                    v-if="category.children && category.children.length"
-                >
-                    <div class="flex justify-between gap-x-[70px]">
+        <div v-else-if="'{{ core()->getConfigData('general.design.categories.category_view') }}' !== 'sidebar'">
+            <nav class="hidden items-center justify-between gap-8 pb-3 lg:flex">
+                <ul class="flex flex-wrap items-center gap-5 text-[15px] font-medium">
+                    <li v-for="category in categories">
+                        <a class="hover:text-primary" :href="category.url">@{{ category.name }}</a>
                         <div
-                            class="grid w-full min-w-max max-w-[150px] flex-auto grid-cols-[1fr] content-start gap-5"
-                            v-for="pairCategoryChildren in pairCategoryChildren(category)"
+                            class="pointer-events-none absolute top-[78px] z-[1] max-h-[580px] w-max max-w-[1260px] translate-y-1 overflow-auto overflow-x-auto border border-b-0 border-l-0 border-r-0 border-t border-[#F3F3F3] bg-white p-9 opacity-0 shadow-[0_6px_6px_1px_rgba(0,0,0,.3)] transition duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-hover:duration-200 group-hover:ease-in ltr:-left-9 rtl:-right-9"
+                            v-if="category.children && category.children.length"
                         >
-                            <template v-for="secondLevelCategory in pairCategoryChildren">
-                                <p class="font-medium text-navyBlue">
-                                    <a :href="secondLevelCategory.url">
-                                        @{{ secondLevelCategory.name }}
-                                    </a>
-                                </p>
-
-                                <ul
-                                    class="grid grid-cols-[1fr] gap-3"
-                                    v-if="secondLevelCategory.children && secondLevelCategory.children.length"
+                            <div class="flex justify-between gap-x-[70px]">
+                                <div
+                                    class="grid w-full min-w-max max-w-[150px] flex-auto grid-cols-[1fr] content-start gap-5"
+                                    v-for="pairCategoryChildren in pairCategoryChildren(category)"
                                 >
-                                    <li
-                                        class="text-sm font-medium text-zinc-500"
-                                        v-for="thirdLevelCategory in secondLevelCategory.children"
-                                    >
-                                        <a :href="thirdLevelCategory.url">
-                                            @{{ thirdLevelCategory.name }}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </template>
+                                    <template v-for="secondLevelCategory in pairCategoryChildren">
+                                        <p class="font-medium text-navyBlue">
+                                            <a :href="secondLevelCategory.url">
+                                                @{{ secondLevelCategory.name }}
+                                            </a>
+                                        </p>
+
+                                        <ul
+                                            class="grid grid-cols-[1fr] gap-3"
+                                            v-if="secondLevelCategory.children && secondLevelCategory.children.length"
+                                        >
+                                            <li
+                                                class="text-sm font-medium text-zinc-500"
+                                                v-for="thirdLevelCategory in secondLevelCategory.children"
+                                            >
+                                                <a :href="thirdLevelCategory.url">
+                                                    @{{ thirdLevelCategory.name }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </li>
+                </ul>
+                <div class="hidden gap-6 text-sm text-slate-500 xl:flex">
+                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15V6"/><path d="M3 9v9"/><path d="M7 12v3"/><path d="M17 3v12"/></svg> Топ‑продажі</span>
+                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Новинки</span>
+                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg> Швидка доставка</span>
                 </div>
-            </div>
+            </nav>
         </div>
 
         <!-- Sidebar category layout -->
@@ -512,6 +505,22 @@
             </x-shop::drawer>
         </div>
     </script>
+
+    <style type="text/css">
+        @media (min-width: 1024px) {
+          .lg\:flex {
+            display: flex;
+          }
+          .lg\:hidden {
+            display: none;
+          }
+        }
+        @media (min-width: 1280px) {
+          .xl\:flex {
+            display: flex;
+          }
+        }
+    </style>
 
     <script type="module">
         app.component('v-desktop-category', {
