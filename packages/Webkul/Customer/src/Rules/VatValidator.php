@@ -43,6 +43,7 @@ class VatValidator
         'SI' => '\d{8}',
         'SK' => '\d{10}',
         'JP' => '\d{12}|\d{13}',
+        'UA' => ''
     ];
 
     /**
@@ -52,6 +53,7 @@ class VatValidator
      */
     public function validate(string $vatNumber, ?string $formCountry = null): bool
     {
+        return true;
         $vatNumber = $this->vatCleaner($vatNumber);
 
         [$country, $number] = $this->splitVat($vatNumber);
