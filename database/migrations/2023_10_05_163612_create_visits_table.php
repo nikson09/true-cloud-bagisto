@@ -26,8 +26,17 @@ class CreateVisitsTable extends Migration
             $table->text('platform')->nullable();
             $table->text('browser')->nullable();
             $table->ipAddress('ip')->nullable();
-            $table->nullableMorphs('visitable'); // object model
-            $table->nullableMorphs('visitor'); // subject model
+
+            // вместо nullableMorphs('visitable')
+            $table->string('visitable_type', 100)->nullable();
+            $table->unsignedBigInteger('visitable_id')->nullable();
+            $table->index(['visitable_type', 'visitable_id']);
+
+            // вместо nullableMorphs('visitor')
+            $table->string('visitor_type', 100)->nullable();
+            $table->unsignedBigInteger('visitor_id')->nullable();
+            $table->index(['visitor_type', 'visitor_id']);
+
             $table->timestamps();
         });
     }
