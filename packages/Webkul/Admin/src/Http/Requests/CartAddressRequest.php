@@ -57,6 +57,8 @@ class CartAddressRequest extends FormRequest
             "{$addressType}.state"        => ['required'],
             "{$addressType}.postcode"     => ['required', new PostCode],
             "{$addressType}.phone"        => ['required', new PhoneNumber],
+            "{$addressType}.area"         => ['nullable'],
+            "{$addressType}.warehouse"    => ['nullable'],
         ]);
     }
 

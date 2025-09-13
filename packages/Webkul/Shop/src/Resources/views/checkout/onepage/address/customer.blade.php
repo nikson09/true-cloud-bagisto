@@ -567,7 +567,7 @@
 
                     this.moveToNextStep();
 
-                    this.$axios.post('{{ route('shop.checkout.onepage.addresses.store') }}', payload)
+                    this.$axios.post('{{ route("shop.checkout.onepage.addresses.store") }}', payload)
                         .then((response) => {
                             this.isStoring = false;
 

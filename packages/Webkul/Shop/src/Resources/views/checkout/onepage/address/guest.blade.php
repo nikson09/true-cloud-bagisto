@@ -129,11 +129,18 @@
                 addAddress(params, { setErrors }) {
                     this.isStoring = true;
 
+                    console.log('Original params:', params);
+                    
+                    // Collect Nova Poshta data from select elements
+                    this.collectNovaPoshtaData(params);
+                    
                     params['billing']['use_for_shipping'] = this.useBillingAddressForShipping;
+
+                    console.log('Updated params with Nova Poshta data:', params);
 
                     this.moveToNextStep();
 
-                    this.$axios.post('{{ route('shop.checkout.onepage.addresses.store') }}', params)
+                    this.$axios.post('{{ route("shop.checkout.onepage.addresses.store") }}', params)
                         .then((response) => {
                             this.isStoring = false;
 
@@ -162,6 +169,61 @@
                     } else {
                         this.$emit('processing', 'payment');
                     }
+                },
+
+                collectNovaPoshtaData(params) {
+                    // Collect billing address Nova Poshta data
+                    const billingAreaSelect = document.querySelector('select[name="billing.area"]');
+                    const billingCitySelect = document.querySelector('select[name="billing.city"]');
+                    const billingWarehouseSelect = document.querySelector('select[name="billing.warehouse"]');
+                    
+                    if (billingAreaSelect && billingAreaSelect.value) {
+                        params.billing.area = billingAreaSelect.selectedOptions[0]?.text || billingAreaSelect.value;
+                        params.billing.state = billingAreaSelect.selectedOptions[0]?.text || billingAreaSelect.value;
+                    }
+                    
+                    if (billingCitySelect && billingCitySelect.value) {
+                        params.billing.city = billingCitySelect.selectedOptions[0]?.text || billingCitySelect.value;
+                    }
+                    
+                    if (billingWarehouseSelect && billingWarehouseSelect.value) {
+                        params.billing.warehouse = billingWarehouseSelect.selectedOptions[0]?.text || billingWarehouseSelect.value;
+                    }
+                    
+                    // Collect shipping address Nova Poshta data if not using billing for shipping
+                    if (!this.useBillingAddressForShipping && params.shipping) {
+                        const shippingAreaSelect = document.querySelector('select[name="shipping.area"]');
+                        const shippingCitySelect = document.querySelector('select[name="shipping.city"]');
+                        const shippingWarehouseSelect = document.querySelector('select[name="shipping.warehouse"]');
+                        
+                        if (shippingAreaSelect && shippingAreaSelect.value) {
+                            params.shipping.area = shippingAreaSelect.value;
+                            params.shipping.state = shippingAreaSelect.selectedOptions[0]?.text || shippingAreaSelect.value;
+                        }
+                        
+                        if (shippingCitySelect && shippingCitySelect.value) {
+                            params.shipping.city = shippingCitySelect.value;
+                        }
+                        
+                        if (shippingWarehouseSelect && shippingWarehouseSelect.value) {
+                            params.shipping.warehouse = shippingWarehouseSelect.value;
+                        }
+                    }
+                    
+                    console.log('Collected Nova Poshta data:', {
+                        billing: {
+                            area: params.billing.area,
+                            city: params.billing.city,
+                            warehouse: params.billing.warehouse,
+                            state: params.billing.state
+                        },
+                        shipping: params.shipping ? {
+                            area: params.shipping.area,
+                            city: params.shipping.city,
+                            warehouse: params.shipping.warehouse,
+                            state: params.shipping.state
+                        } : null
+                    });
                 }
             }
         });

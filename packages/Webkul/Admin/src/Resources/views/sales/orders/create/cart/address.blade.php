@@ -396,6 +396,7 @@
                     this.$emit('processing', 'address');
 
                     params = params[this.activeAddressForm];
+                    console.log(activeAddressForm);
 
                     let address = this.customerSavedAddresses[this.activeAddressForm].find(address => {
                         return address.id == params.id;

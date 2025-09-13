@@ -28,6 +28,37 @@ abstract class Address extends Model implements AddressContract
     ];
 
     /**
+     * Fillable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'address_type',
+        'customer_id',
+        'cart_id',
+        'order_id',
+        'parent_address_id',
+        'first_name',
+        'last_name',
+        'gender',
+        'company_name',
+        'address1',
+        'address2',
+        'city',
+        'state',
+        'country',
+        'postcode',
+        'email',
+        'phone',
+        'vat_id',
+        'default_address',
+        'use_for_shipping',
+        'additional',
+        'area',
+        'warehouse',
+    ];
+
+    /**
      * Castable.
      *
      * @var array

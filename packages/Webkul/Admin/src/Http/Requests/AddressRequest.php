@@ -39,6 +39,8 @@ class AddressRequest extends FormRequest
             'vat_id'          => [(new VatIdRule)->setCountry($this->input('country'))],
             'email'           => ['required'],
             'default_address' => ['sometimes', 'required', 'in:0,1'],
+            'area'            => ['nullable'],
+            'warehouse'       => ['nullable'],
         ];
     }
 

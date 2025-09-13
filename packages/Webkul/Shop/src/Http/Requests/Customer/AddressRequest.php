@@ -38,6 +38,8 @@ class AddressRequest extends FormRequest
             'phone'        => ['required', new PhoneNumber],
             'vat_id'       => [(new VatIdRule)->setCountry($this->input('country'))],
             'email'        => ['required'],
+            'area'         => ['nullable'],
+            'warehouse'    => ['nullable'],
         ];
     }
 
