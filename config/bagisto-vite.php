@@ -3,10 +3,10 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Bagisto Vite Configuration
+    | True Cloud Vite Configuration
     |--------------------------------------------------------------------------
     |
-    | Please add your Vite registry here to seamlessly support the `bagisto_assets` function.
+    | Please add your Vite registry here to seamlessly support the `truecloud_assets` function.
     |
     */
 

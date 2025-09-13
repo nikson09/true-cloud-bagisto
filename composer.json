@@ -1,7 +1,7 @@
 {
-    "name": "bagisto/bagisto",
+    "name": "truecloud/bagisto",
     "type": "project",
-    "description": "Bagisto Laravel E-Commerce",
+    "description": "True Cloud Laravel E-Commerce",
     "keywords": [
         "framework",
         "laravel"

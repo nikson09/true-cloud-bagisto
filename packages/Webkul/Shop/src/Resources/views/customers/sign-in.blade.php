@@ -23,11 +23,11 @@
             <a
                 href="{{ route('shop.home.index') }}"
                 class="m-[0_auto_20px_auto]"
-                aria-label="@lang('shop::app.customers.login-form.bagisto')"
+                aria-label="True Cloud"
             >
                 <img
-                    src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                    alt="{{ config('app.name') }}"
+                    src="/logo.png"
+                    alt="True Cloud"
                     width="131"
                     height="29"
                 >

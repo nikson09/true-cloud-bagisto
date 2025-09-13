@@ -23,14 +23,12 @@
 
             <a
                 href="{{ route('shop.home.index') }}"
-                class="max-h-[30px]"
-                aria-label="@lang('shop::app.components.layouts.header.mobile.bagisto')"
+                aria-label="True Cloud"
             >
                 <img
-                    src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                    alt="{{ config('app.name') }}"
-                    width="131"
-                    height="29"
+                    src="/logo.png"
+                    alt="True Cloud"
+                    style="height: 30vw; width: auto;"
                 >
             </a>
 
@@ -247,10 +245,9 @@
                 <div class="flex items-center justify-between">
                     <a href="{{ route('shop.home.index') }}">
                         <img
-                            src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                            alt="{{ config('app.name') }}"
-                            width="131"
-                            height="29"
+                            src="/logo.png"
+                            alt="True Cloud"
+                            style="height: 30vw; width: auto;"
                         >
                     </a>
                 </div>

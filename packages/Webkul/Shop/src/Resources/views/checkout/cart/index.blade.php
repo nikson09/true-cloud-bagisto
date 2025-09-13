@@ -26,11 +26,11 @@
                 <a
                     href="{{ route('shop.home.index') }}"
                     class="flex min-h-[30px]"
-                    aria-label="@lang('shop::app.checkout.cart.index.bagisto')"
+                    aria-label="True Cloud"
                 >
                     <img
-                        src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                        alt="{{ config('app.name') }}"
+                        src="/logo.png"
+                        alt="True Cloud"
                         width="131"
                         height="29"
                     >
@@ -488,7 +488,7 @@
 
                 methods: {
                     getCart() {
-                        this.$axios.get('{{ route('shop.api.checkout.cart.index') }}')
+                        this.$axios.get("{{ route('shop.api.checkout.cart.index') }}")
                             .then(response => {
                                 this.cart = response.data.data;
 
@@ -518,7 +518,7 @@
                     update() {
                         this.isStoring = true;
 
-                        this.$axios.put('{{ route('shop.api.checkout.cart.update') }}', { qty: this.applied.quantity })
+                        this.$axios.put("{{ route('shop.api.checkout.cart.update') }}", { qty: this.applied.quantity })
                             .then(response => {
                                 if (response.data.message) {
                                     this.cart = response.data.data;
@@ -543,7 +543,7 @@
                     removeItem(itemId) {
                         this.$emitter.emit('open-confirm-modal', {
                             agree: () => {
-                                this.$axios.post('{{ route('shop.api.checkout.cart.destroy') }}', {
+                                this.$axios.post("{{ route('shop.api.checkout.cart.destroy') }}", {
                                         '_method': 'DELETE',
                                         'cart_item_id': itemId,
                                     })
@@ -563,7 +563,7 @@
                             agree: () => {
                                 const selectedItemsIds = this.cart.items.flatMap(item => item.selected ? item.id : []);
 
-                                this.$axios.post('{{ route('shop.api.checkout.cart.destroy_selected') }}', {
+                                this.$axios.post("{{ route('shop.api.checkout.cart.destroy_selected') }}", {
                                         '_method': 'DELETE',
                                         'ids': selectedItemsIds,
                                     })
@@ -587,7 +587,7 @@
 
                                 const selectedItemsQty = this.cart.items.filter(item => item.selected).map(item => this.applied.quantity[item.id] ?? item.quantity);
 
-                                this.$axios.post('{{ route('shop.api.checkout.cart.move_to_wishlist') }}', {
+                                this.$axios.post("{{ route('shop.api.checkout.cart.move_to_wishlist') }}", {
                                         'ids': selectedItemsIds,
                                         'qty': selectedItemsQty
                                     })

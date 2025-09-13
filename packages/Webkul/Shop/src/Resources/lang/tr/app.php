@@ -5,7 +5,7 @@ return [
         'forgot-password' => [
             'already-sent'         => 'Zaten Şifre Sıfırlama Postası Gönderildi.',
             'back'                 => 'Girişe geri dön?',
-            'bagisto'              => 'Bagisto',
+            'bagisto'              => 'True Cloud',
             'email'                => 'E-posta',
             'email-not-exist'      => 'Bu e-posta adresiyle kullanıcı bulunamadı.',
             'footer'               => '© Telif Hakkı 2010 - :current_year, Webkul Software (Hindistan\'da kayıtlı). Tüm hakları saklıdır.',
@@ -19,7 +19,7 @@ return [
 
         'reset-password' => [
             'back-link-title'  => 'Girişe Geri Dön',
-            'bagisto'          => 'Bagisto',
+            'bagisto'          => 'True Cloud',
             'confirm-password' => 'Parolayı Onayla',
             'email'            => 'Kayıtlı E-posta',
             'footer'           => '© Telif Hakkı 2010 - :current_year, Webkul Software (Hindistan\'da kayıtlı). Tüm hakları saklıdır.',
@@ -29,7 +29,7 @@ return [
         ],
 
         'login-form' => [
-            'bagisto'             => 'Bagisto',
+            'bagisto'             => 'True Cloud',
             'button-title'        => 'Oturum Aç',
             'create-your-account' => 'Hesabınızı oluşturun',
             'email'               => 'E-posta',
@@ -48,7 +48,7 @@ return [
 
         'signup-form' => [
             'account-exists'              => 'Zaten bir hesabınız var mı?',
-            'bagisto'                     => 'Bagisto',
+            'bagisto'                     => 'True Cloud',
             'button-title'                => 'Kaydol',
             'click-here'                  => 'Buraya Tıklayın',
             'confirm-pass'                => 'Parolayı Onayla',
@@ -491,7 +491,7 @@ return [
                     'bottom' => [
                         'all'           => 'Tümü',
                         'back-button'   => 'Ana Menüye Geri Dön',
-                        'bagisto'       => 'Bagisto',
+                        'bagisto'       => 'True Cloud',
                         'categories'    => 'Kategoriler',
                         'compare'       => 'Karşılaştır',
                         'dropdown-text' => 'Sepet, Siparişler ve İstek Listesini Yönet',
@@ -512,7 +512,7 @@ return [
                 'mobile' => [
                     'account'       => 'Hesap',
                     'back-button'   => 'Ana Menüye Geri Dön',
-                    'bagisto'       => 'Bagisto',
+                    'bagisto'       => 'True Cloud',
                     'compare'       => 'Karşılaştır',
                     'currencies'    => 'Para Birimleri',
                     'dropdown-text' => 'Sepet, Siparişler ve İstek Listesini Yönet',
@@ -937,7 +937,7 @@ return [
             'suspended-account-message' => 'Hesabınız askıya alınmıştır.',
 
             'index' => [
-                'bagisto'                  => 'Bagisto',
+                'bagisto'                  => 'True Cloud',
                 'cart'                     => 'Sepet',
                 'continue-shopping'        => 'Alışverişe Devam Et',
                 'empty-product'            => 'Sepetinizde ürün bulunmuyor.',

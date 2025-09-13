@@ -23,8 +23,8 @@
                             />
                         @else
                             <img
-                                src="{{ bagisto_asset('images/logo.svg', 'shop') }}"
-                                alt="{{ config('app.name') }}"
+                                src="/logo.png"
+                                alt="True Cloud"
                                 width="131"
                                 height="29"
                                 style="width: 156px;height: 40px;"

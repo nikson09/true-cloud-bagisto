@@ -24,11 +24,11 @@
                 <a
                     href="{{ route('shop.home.index') }}"
                     class="flex min-h-[30px]"
-                    aria-label="@lang('shop::checkout.onepage.index.bagisto')"
+                    aria-label="True Cloud"
                 >
                     <img
-                        src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                        alt="{{ config('app.name') }}"
+                        src="/logo.png"
+                        alt="True Cloud"
                         width="131"
                         height="29"
                     >
@@ -221,12 +221,12 @@
                     placeOrder() {
                         this.isPlacingOrder = true;
 
-                        this.$axios.post('{{ route('shop.checkout.onepage.orders.store') }}')
+                        this.$axios.post("{{ route('shop.checkout.onepage.orders.store') }}")
                             .then(response => {
                                 if (response.data.data.redirect) {
                                     window.location.href = response.data.data.redirect_url;
                                 } else {
-                                    window.location.href = '{{ route('shop.checkout.onepage.success') }}';
+                                    window.location.href = "{{ route('shop.checkout.onepage.success') }}";
                                 }
 
                                 this.isPlacingOrder = false;

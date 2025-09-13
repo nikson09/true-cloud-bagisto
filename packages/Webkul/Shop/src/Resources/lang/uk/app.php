@@ -5,7 +5,7 @@ return [
         'forgot-password' => [
             'already-sent'         => 'Лист для скидання пароля вже надіслано.',
             'back'                 => 'Повернутися до входу?',
-            'bagisto'              => 'Багісто',
+            'bagisto'              => 'True Cloud',
             'email'                => 'Електронна пошта',
             'email-not-exist'      => 'Ми не можемо знайти користувача за цією адресою електронної пошти.',
             'footer'               => '© Копірайт 2010 - :current_year, Webkul Software (зареєстрована в Індії). Всі права захищені.',
@@ -19,7 +19,7 @@ return [
 
         'reset-password' => [
             'back-link-title'  => 'Повернутися до входу',
-            'bagisto'          => 'Багісто',
+            'bagisto'          => 'True Cloud',
             'confirm-password' => 'Підтвердити пароль',
             'email'            => 'Зареєстрована електронна пошта',
             'footer'           => '© Копірайт 2010 - :current_year, Webkul Software (зареєстрована в Індії). Всі права захищені.',
@@ -29,7 +29,7 @@ return [
         ],
 
         'login-form' => [
-            'bagisto'             => 'Багісто',
+            'bagisto'             => 'True Cloud',
             'button-title'        => 'Увійти',
             'create-your-account' => 'Створити свій обліковий запис',
             'email'               => 'Електронна пошта',
@@ -48,7 +48,7 @@ return [
 
         'signup-form' => [
             'account-exists'              => 'Вже є обліковий запис?',
-            'bagisto'                     => 'Багісто',
+            'bagisto'                     => 'True Cloud',
             'button-title'                => 'Зареєструватися',
             'click-here'                  => 'Натисніть тут',
             'confirm-pass'                => 'Підтвердіть пароль',
@@ -491,7 +491,7 @@ return [
                     'bottom' => [
                         'all'           => 'Все',
                         'back-button'   => 'Повернутися до головного меню',
-                        'bagisto'       => 'Bagisto',
+                        'bagisto'       => 'True Cloud',
                         'categories'    => 'Категорії',
                         'compare'       => 'Порівняти',
                         'dropdown-text' => 'Керуйте кошиком, замовленнями та списком бажань',
@@ -512,7 +512,7 @@ return [
                 'mobile' => [
                     'account'       => 'Обліковий запис',
                     'back-button'   => 'Повернутися до головного меню',
-                    'bagisto'       => 'Bagisto',
+                    'bagisto'       => 'True Cloud',
                     'compare'       => 'Порівняти',
                     'currencies'    => 'Валюти',
                     'dropdown-text' => 'Керуйте кошиком, замовленнями та списком бажань',
@@ -937,7 +937,7 @@ return [
             'suspended-account-message' => 'Ваш обліковий запис призупинено.',
 
             'index' => [
-                'bagisto'                  => 'Багісто',
+                'bagisto'                  => 'True Cloud',
                 'cart'                     => 'Кошик',
                 'continue-shopping'        => 'Продовжити покупки',
                 'empty-product'            => 'У вас немає товарів у кошику.',
