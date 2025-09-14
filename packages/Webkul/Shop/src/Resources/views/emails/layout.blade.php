@@ -15,19 +15,17 @@
                 <!-- Email Header -->
                 <div style="margin-bottom: 65px;">
                     <a href="{{ route('shop.home.index') }}">
-                        @if ($logo = core()->getCurrentChannel()->logo_url)
+                        @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
                             <img
-                                src="{{ $logo }}"
+                                src="{{ Storage::url($logo) }}"
                                 alt="{{ config('app.name') }}"
-                                style="height: 40px; width: 110px;"
+                                style="height: 50px; max-width: 200px;"
                             />
                         @else
                             <img
                                 src="{{ asset('logo.png') }}"
-                                alt="True Cloud"
-                                width="131"
-                                height="29"
-                                style="width: 156px;height: 40px;"
+                                alt="{{ config('app.name') }}"
+                                style="height: 50px; max-width: 200px;"
                             />
                         @endif
                     </a>

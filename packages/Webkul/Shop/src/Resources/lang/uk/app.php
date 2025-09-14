@@ -324,7 +324,7 @@ return [
                     'shipping-handling-excl-tax' => 'Доставка та обробка (без податку)',
                     'shipping-handling-incl-tax' => 'Доставка та обробка (з податком)',
                     'shipping-handling'          => 'Доставка та обробка',
-                    'shipping-method'            => 'Метод доставки',
+                    'shipping-method'            => 'Спосіб доставки',
                     'sku'                        => 'Артикул',
                     'subtotal-excl-tax'          => 'Підсумок (без податку)',
                     'subtotal-incl-tax'          => 'Підсумок (з податком)',
@@ -1362,6 +1362,14 @@ return [
             'subtotal'                   => 'Підсумок',
             'tax'                        => 'ПДВ',
             'tracking-number'            => 'Номер відстеження: :tracking_number',
+
+            'nova-poshta' => [
+                'area' => 'Область',
+                'city' => 'Місто',
+                'warehouse' => 'Відділення',
+                'info' => 'Інформація про доставку Новою поштою',
+            ],
         ],
+
     ],
 ];

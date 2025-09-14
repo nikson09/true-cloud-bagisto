@@ -1362,6 +1362,14 @@ return [
             'subtotal'                   => 'Подитог',
             'tax'                        => 'Налог',
             'tracking-number'            => 'Номер отслеживания: :tracking_number',
+
+            'nova-poshta' => [
+                'area' => 'Область',
+                'city' => 'Город',
+                'warehouse' => 'Отделение',
+                'info' => 'Информация о доставке Новой почтой',
+            ],
         ],
+
     ],
 ];

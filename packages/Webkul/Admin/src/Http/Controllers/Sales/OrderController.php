@@ -15,6 +15,8 @@ use Webkul\Checkout\Repositories\CartRepository;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
 use Webkul\Sales\Repositories\OrderCommentRepository;
 use Webkul\Sales\Repositories\OrderRepository;
+use Webkul\Sales\Repositories\InvoiceRepository;
+use Webkul\Sales\Repositories\ShipmentRepository;
 use Webkul\Sales\Transformers\OrderResource;
 
 class OrderController extends Controller
@@ -29,6 +31,8 @@ class OrderController extends Controller
         protected OrderCommentRepository $orderCommentRepository,
         protected CartRepository $cartRepository,
         protected CustomerGroupRepository $customerGroupRepository,
+        protected InvoiceRepository $invoiceRepository,
+        protected ShipmentRepository $shipmentRepository,
     ) {}
 
     /**
@@ -166,6 +170,72 @@ class OrderController extends Controller
             session()->flash('success', trans('admin::app.sales.orders.view.cancel-success'));
         } else {
             session()->flash('error', trans('admin::app.sales.orders.view.create-error'));
+        }
+
+        return redirect()->route('admin.sales.orders.view', $id);
+    }
+
+    /**
+     * Complete order action - automatically create invoice and shipment, then mark as completed.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function complete(int $id)
+    {
+        $order = $this->orderRepository->findOrFail($id);
+
+        // Check if order can be completed
+        if ($order->status !== 'processing') {
+            session()->flash('error', trans('admin::app.sales.orders.view.complete-error-status'));
+            return redirect()->route('admin.sales.orders.view', $id);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create invoice if not exists and order can be invoiced
+            if ($order->canInvoice() && $order->invoices->isEmpty()) {
+                $invoiceData = ['order_id' => $order->id];
+                
+                foreach ($order->items as $item) {
+                    $invoiceData['invoice']['items'][$item->id] = $item->qty_to_invoice;
+                }
+
+                $this->invoiceRepository->create($invoiceData);
+            }
+
+            // Create shipment if not exists and order can be shipped
+            if ($order->canShip() && $order->shipments->isEmpty()) {
+                $shipmentData = [
+                    'order_id' => $order->id,
+                    'carrier_name' => 'Новая почта', // Предустановленное название перевозчика
+                    'shipment' => [
+                        'source' => $order->channel->inventory_sources->first()->id,
+                        'items' => []
+                    ]
+                ];
+
+                foreach ($order->items as $item) {
+                    if ($item->isStockable()) {
+                        $shipmentData['shipment']['items'][$item->id] = [$order->channel->inventory_sources->first()->id => $item->qty_to_ship];
+                    }
+                }
+
+                if (!empty($shipmentData['shipment']['items'])) {
+                    $this->shipmentRepository->create($shipmentData);
+                }
+            }
+
+            // Update order status to completed
+            $this->orderRepository->updateOrderStatus($order, 'completed');
+
+            DB::commit();
+
+            session()->flash('success', trans('admin::app.sales.orders.view.complete-success'));
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', trans('admin::app.sales.orders.view.complete-error') . ': ' . $e->getMessage());
         }
 
         return redirect()->route('admin.sales.orders.view', $id);

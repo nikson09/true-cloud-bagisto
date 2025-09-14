@@ -42,6 +42,33 @@
                     ---<br/>
 
                     @lang('shop::app.emails.orders.contact') : {{ $order->billing_address->phone }}
+
+                    @if ($order->shipping_address->area || $order->shipping_address->warehouse)
+                        <br/><br/>
+                        <div style="background-color: #f0f8ff; padding: 10px; border-left: 4px solid #0066cc; margin-top: 10px;">
+                            <div style="font-size: 14px; font-weight: 600; color: #0066cc; margin-bottom: 5px;">
+                                @lang('shop::app.emails.orders.nova-poshta.info')
+                            </div>
+                            
+                            @if ($order->shipping_address->area)
+                                <div style="font-size: 14px; color: #333;">
+                                    <strong>@lang('shop::app.emails.orders.nova-poshta.area'):</strong> {{ $order->shipping_address->area }}
+                                </div>
+                            @endif
+                            
+                            @if ($order->shipping_address->city)
+                                <div style="font-size: 14px; color: #333;">
+                                    <strong>@lang('shop::app.emails.orders.nova-poshta.city'):</strong> {{ $order->shipping_address->city }}
+                                </div>
+                            @endif
+                            
+                            @if ($order->shipping_address->warehouse)
+                                <div style="font-size: 14px; color: #333;">
+                                    <strong>@lang('shop::app.emails.orders.nova-poshta.warehouse'):</strong> {{ $order->shipping_address->warehouse }}
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <div style="font-size: 16px;font-weight: 600;color: #121A26;">

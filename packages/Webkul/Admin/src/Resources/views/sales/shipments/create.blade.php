@@ -69,6 +69,8 @@
                                         type="text"
                                         id="shipment[carrier_title]"
                                         name="shipment[carrier_title]"
+                                        value="Новая почта"
+                                        readonly
                                         :label="trans('admin::app.sales.shipments.create.carrier-name')"
                                         :placeholder="trans('admin::app.sales.shipments.create.carrier-name')"
                                     />
@@ -272,7 +274,7 @@
 
         data() {
             return {
-                source: "",
+                source: "{{ $order->channel->inventory_sources->first()->id }}", // Устанавливаем первый источник по умолчанию
             };
         },
 

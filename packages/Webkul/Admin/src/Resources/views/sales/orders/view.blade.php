@@ -73,6 +73,40 @@
             @endif
 
             @if (
+                $order->status === 'processing'
+                && bouncer()->hasPermission('sales.orders.complete')
+            )
+               <form
+                    method="POST"
+                    ref="completeOrderForm"
+                    action="{{ route('admin.sales.orders.complete', $order->id) }}"
+                >
+                    @csrf
+                </form>
+
+                <div
+                    class="transparent-button px-1 py-1.5 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
+                    @click="$emitter.emit('open-confirm-modal', {
+                        message: '@lang('admin::app.sales.orders.view.complete-msg')',
+                        agree: () => {
+                            this.$refs['completeOrderForm'].submit()
+                        }
+                    })"
+                >
+                <span
+                        class="icon-done text-2xl"
+                        role="presentation"
+                        tabindex="0"
+                    >
+                    </span>
+
+                    <a href="javascript:void(0);">
+                        @lang('admin::app.sales.orders.view.complete')
+                    </a>
+                </div>
+            @endif
+
+            @if (
                 $order->canCancel()
                 && bouncer()->hasPermission('sales.orders.cancel')
             )
