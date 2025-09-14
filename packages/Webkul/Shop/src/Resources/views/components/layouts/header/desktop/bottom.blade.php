@@ -9,14 +9,13 @@
                     <path d="M12 6v6l4 2"/>
                     <circle cx="12" cy="12" r="10"/>
                 </svg>
-                Доставка по всій Україні за 24–48 годин
+@lang('shop::app.components.layouts.header.desktop.bottom.topbar.delivery')
             </span>
-            <span class="tc-topbar-guarantee">Оригінальна продукція • 14 днів на повернення</span>
+<span class="tc-topbar-guarantee">@lang('shop::app.components.layouts.header.desktop.bottom.topbar.guarantee')</span>
         </div>
         <div class="tc-topbar-right">
-            <a href="#" class="tc-topbar-link">RU</a>
-            <a href="#" class="tc-topbar-link">PL</a>
-            <a href="#" class="tc-topbar-link">UA</a>
+            <a href="javascript:void(0)" onClick="changeLocale('ru')" class="tc-topbar-link">RU</a>
+            <a href="javascript:void(0)" onClick="changeLocale('uk')" class="tc-topbar-link">UA</a>
             <a href="tel:+380111222333" class="tc-topbar-link">+380 111 222 333</a>
         </div>
     </div>
@@ -78,7 +77,7 @@
                         aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.submit')"
                         style="background-color: rgb(255 107 53 / var(--tw-bg-opacity, 1));border-radius: .75rem;"
                     >
-                        Знайти
+@lang('shop::app.components.layouts.header.desktop.bottom.topbar.search-btn')
                     </button>
                 </form>
             </div>
@@ -260,17 +259,17 @@
     <div id="mobileMenu" class="hidden border-t border-slate-100 bg-white lg:hidden">
         <div class="mx-auto max-w-7xl px-4 py-4">
             <div class="mb-3">
-                <input class="w-full rounded-2xl border border-slate-200 bg-slate-50/60 py-2.5 px-3 outline-none ring-primary/20 focus:ring-2" placeholder="Пошук по каталогу…" />
+                <input class="w-full rounded-2xl border border-slate-200 bg-slate-50/60 py-2.5 px-3 outline-none ring-primary/20 focus:ring-2" placeholder="@lang('shop::app.components.layouts.header.desktop.bottom.topbar.search-placeholder')" />
             </div>
             <ul class="grid grid-cols-2 gap-3 text-[15px] font-medium">
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=hookahs">Кальяни</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=tobacco">Тютюн</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=coal">Вугілля</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=bowls">Чаші</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=hoses">Шланги</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=accessories">Аксесуари</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=kits">Набори</a></li>
-                <li><a class="block rounded-xl bg-slate-50 p-3" href="?sale=1">Знижки</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=hookahs">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.hookahs')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=tobacco">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.tobacco')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=coal">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.coal')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=bowls">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.bowls')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=hoses">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.hoses')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=accessories">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.accessories')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?category=kits">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.kits')</a></li>
+                <li><a class="block rounded-xl bg-slate-50 p-3" href="?sale=1">@lang('shop::app.components.layouts.header.desktop.bottom.mobile-menu.sale')</a></li>
             </ul>
         </div>
     </div>
@@ -342,9 +341,9 @@
                     </li>
                 </ul>
                 <div class="hidden gap-6 text-sm text-slate-500 xl:flex ml-8">
-                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15V6"/><path d="M3 9v9"/><path d="M7 12v3"/><path d="M17 3v12"/></svg> Топ‑продажі</span>
-                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Новинки</span>
-                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg> Швидка доставка</span>
+                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15V6"/><path d="M3 9v9"/><path d="M7 12v3"/><path d="M17 3v12"/></svg> @lang('shop::app.components.layouts.header.desktop.bottom.topbar.top-sales')</span>
+                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> @lang('shop::app.components.layouts.header.desktop.bottom.topbar.new-items')</span>
+                    <span class="inline-flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg> @lang('shop::app.components.layouts.header.desktop.bottom.topbar.fast-delivery')</span>
                 </div>
             </nav>
         </div>
@@ -709,6 +708,13 @@
                 }
             },
         });
+    </script>
+    <script>
+        function changeLocale(localeCode) {
+            let url = new URL(window.location.href);
+            url.searchParams.set('locale', localeCode);
+            window.location.href = url.href;
+        }
     </script>
 @endPushOnce
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.after') !!}

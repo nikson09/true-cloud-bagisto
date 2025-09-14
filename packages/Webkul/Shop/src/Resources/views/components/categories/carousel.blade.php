@@ -21,7 +21,7 @@
             <!-- Header Section -->
             <div class="mb-8 flex items-center justify-between">
                 <h2 class="text-3xl font-bold text-black max-md:text-2xl max-sm:text-xl">
-                    Категорії
+                    @lang('shop::app.categories.carousel.title')
                 </h2>
             </div>
 
