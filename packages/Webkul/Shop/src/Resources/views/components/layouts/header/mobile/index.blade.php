@@ -46,7 +46,7 @@
                 class="flex items-center gap-2"
                 aria-label="True Cloud"
             >
-                <img src="/logo.png" alt="True Cloud" class="h-8 w-auto" style="margin-right: 6px;">
+                <img src="{{ asset('logo.png') }}" alt="True Cloud" class="h-8 w-auto" style="margin-right: 6px;">
                 <div class="block">
                     <div class="text-sm font-extrabold tracking-tight text-slate-900">True Cloud</div>
                     <div class="text-xs text-slate-500 font-medium">EST. 2015</div>
@@ -265,7 +265,7 @@
             <x-slot:header>
                 <div class="flex items-center justify-between">
                     <a href="{{ route('shop.home.index') }}" class="flex items-center gap-2">
-                        <img src="/logo.png" alt="True Cloud" class="h-8 w-auto" style="margin-right: 6px;">
+                        <img src="{{ asset('logo.png') }}" alt="True Cloud" class="h-8 w-auto" style="margin-right: 6px;">
                         <div class="block">
                             <div class="text-sm font-extrabold tracking-tight text-slate-900">True Cloud</div>
                             <div class="text-xs text-slate-500 font-medium">EST. 2015</div>

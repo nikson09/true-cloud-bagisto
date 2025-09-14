@@ -152,7 +152,7 @@
                     <div class="m-auto grid h-[100vh] max-w-[362px] items-end">
                         <div class="grid gap-4">
                             <img
-                                src="{{ bagisto_asset('images/installer/bagisto-logo.svg', 'installer') }}"
+                                src="{{ asset('logo.png') }}"
                                 alt="@lang('installer::app.installer.index.bagisto-logo')"
                             >
 

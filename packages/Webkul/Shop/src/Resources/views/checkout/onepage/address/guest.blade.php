@@ -147,11 +147,10 @@
                             if (response.data.data.redirect_url) {
                                 window.location.href = response.data.data.redirect_url;
                             } else {
-                                if (this.cart.have_stockable_items) {
-                                    this.$emit('processed', response.data.data.shippingMethods);
-                                } else {
-                                    this.$emit('processed', response.data.data.payment_methods);
-                                }
+                                // Always emit payment methods since shipping is handled automatically
+                                // Если response содержит payment_methods, используем их, иначе используем весь объект
+                                const paymentData = response.data.data.payment_methods || response.data.data;
+                                this.$emit('processed', paymentData);
                             }
                         })
                         .catch(error => {
@@ -164,11 +163,8 @@
                 },
 
                 moveToNextStep() {
-                    if (this.cart.have_stockable_items) {
-                        this.$emit('processing', 'shipping');
-                    } else {
-                        this.$emit('processing', 'payment');
-                    }
+                    // Always go to payment step - shipping is handled automatically
+                    this.$emit('processing', 'payment');
                 },
 
                 collectNovaPoshtaData(params) {

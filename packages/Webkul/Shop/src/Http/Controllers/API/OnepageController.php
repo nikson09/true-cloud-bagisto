@@ -4,6 +4,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Payment\Facades\Payment;
@@ -73,9 +74,28 @@ class OnepageController extends APIController
                 ]);
             }
 
+            // Автоматически выбираем первый доступный способ доставки
+            if (isset($rates['shippingMethods']) && !empty($rates['shippingMethods'])) {
+                $firstMethod = reset($rates['shippingMethods']);
+                if (isset($firstMethod['rates']) && !empty($firstMethod['rates'])) {
+                    $firstRate = reset($firstMethod['rates']);
+                    if (isset($firstRate['method'])) {
+                        // Сохраняем способ доставки напрямую в cart, минуя валидацию
+                        $cart->shipping_method = $firstRate['method'];
+                        $cart->save();
+                        Cart::collectTotals();
+                    }
+                }
+            } else {
+                // Если нет доступных способов доставки, попробуем использовать free shipping
+                $cart->shipping_method = 'free_free';
+                $cart->save();
+                Cart::collectTotals();
+            }
+
             return new JsonResource([
                 'redirect' => false,
-                'data'     => $rates,
+                'data'     => Payment::getSupportedPaymentMethods(),
             ]);
         }
 
@@ -88,7 +108,7 @@ class OnepageController extends APIController
     /**
      * Store shipping method.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function storeShippingMethod()
     {
@@ -114,7 +134,7 @@ class OnepageController extends APIController
     /**
      * Store payment method.
      *
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
     public function storePaymentMethod()
     {
@@ -227,7 +247,25 @@ class OnepageController extends APIController
             $cart->haveStockableItems()
             && ! $cart->selected_shipping_rate
         ) {
-            throw new \Exception(trans('shop::app.checkout.cart.specify-shipping-method'));
+            // Попробуем автоматически выбрать способ доставки
+            if ($rates = Shipping::collectRates()) {
+                if (isset($rates['shippingMethods']) && !empty($rates['shippingMethods'])) {
+                    $firstMethod = reset($rates['shippingMethods']);
+                    if (isset($firstMethod['rates']) && !empty($firstMethod['rates'])) {
+                        $firstRate = reset($firstMethod['rates']);
+                        if (isset($firstRate['method'])) {
+                            $cart->shipping_method = $firstRate['method'];
+                            $cart->save();
+                            Cart::collectTotals();
+                        }
+                    }
+                }
+            }
+            
+            // Если все еще нет выбранного способа доставки, выбрасываем ошибку
+            if (! $cart->selected_shipping_rate) {
+                throw new \Exception(trans('shop::app.checkout.cart.specify-shipping-method'));
+            }
         }
 
         if (! $cart->payment) {

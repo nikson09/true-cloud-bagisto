@@ -1,3 +1,59 @@
+@pushOnce('styles')
+    <style>
+        /* Nova Poshta Select Styles */
+        .nova-poshta-select {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .nova-poshta-select:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nova-poshta-select:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .nova-poshta-select:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Success state */
+        .nova-poshta-select.success {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+        
+        /* Error state */
+        .nova-poshta-select.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+        
+        /* Subtle fade in animation for options */
+        .nova-poshta-option {
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+@endPushOnce
+
 @pushOnce('scripts')
     <script
         type="text/x-template"
@@ -82,13 +138,32 @@
                     Область
                 </x-shop::form.control-group.label>
 
-                <select 
-                    :name="controlName + '.area'"
-                    id="nova-poshta-area"
-                    class="flex w-full min-h-[39px] py-2 px-3 border border-gray-300 rounded-md text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:ring-gray-100 max-md:border-0 max-md:border-b-2 max-md:border-gray-300 max-md:rounded-none max-md:px-0"
-                >
-                    <option value="">Виберіть область</option>
-                </select>
+                <div class="relative">
+                    <select 
+                        :name="controlName + '.area'"
+                        id="nova-poshta-area"
+                        rules="required"
+                        :label="'Область'"
+                        class="nova-poshta-select flex w-full min-h-[48px] py-3 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none appearance-none cursor-pointer shadow-sm"
+                    >
+                        <option value="">Виберіть область</option>
+                    </select>
+                    
+                    <!-- Custom dropdown arrow -->
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Loading indicator for area -->
+                    <div id="area-loading" class="absolute inset-y-0 right-8 flex items-center hidden">
+                        <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
 
                 <x-shop::form.control-group.error ::name="controlName + '.area'" />
             </x-shop::form.control-group>
@@ -99,14 +174,33 @@
                     Місто
                 </x-shop::form.control-group.label>
 
-                <select 
-                    :name="controlName + '.city'"
-                    id="nova-poshta-city"
-                    disabled
-                    class="flex w-full min-h-[39px] py-2 px-3 border border-gray-300 rounded-md text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:ring-gray-100 max-md:border-0 max-md:border-b-2 max-md:border-gray-300 max-md:rounded-none max-md:px-0"
-                >
-                    <option value="">Виберіть місто</option>
-                </select>
+                <div class="relative">
+                    <select 
+                        :name="controlName + '.city'"
+                        id="nova-poshta-city"
+                        disabled
+                        rules="required"
+                        :label="'Місто'"
+                        class="nova-poshta-select flex w-full min-h-[48px] py-3 px-4 border border-gray-300 rounded-lg text-sm text-gray-500 bg-gray-50 transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none appearance-none cursor-not-allowed shadow-sm disabled:opacity-60"
+                    >
+                        <option value="">Спочатку виберіть область</option>
+                    </select>
+                    
+                    <!-- Custom dropdown arrow -->
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Loading indicator for city -->
+                    <div id="city-loading" class="absolute inset-y-0 right-8 flex items-center hidden">
+                        <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
 
                 <x-shop::form.control-group.error ::name="controlName + '.city'" />
             </x-shop::form.control-group>
@@ -117,14 +211,33 @@
                     Відділення Нової Пошти
                 </x-shop::form.control-group.label>
 
-                <select 
-                    :name="controlName + '.warehouse'"
-                    id="nova-poshta-warehouse"
-                    disabled
-                    class="flex w-full min-h-[39px] py-2 px-3 border border-gray-300 rounded-md text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:ring-gray-100 max-md:border-0 max-md:border-b-2 max-md:border-gray-300 max-md:rounded-none max-md:px-0"
-                >
-                    <option value="">Виберіть відділення</option>
-                </select>
+                <div class="relative">
+                    <select 
+                        :name="controlName + '.warehouse'"
+                        id="nova-poshta-warehouse"
+                        disabled
+                        rules="required"
+                        :label="'Відділення Нової Пошти'"
+                        class="nova-poshta-select flex w-full min-h-[48px] py-3 px-4 border border-gray-300 rounded-lg text-sm text-gray-500 bg-gray-50 transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none appearance-none cursor-not-allowed shadow-sm disabled:opacity-60"
+                    >
+                        <option value="">Спочатку виберіть місто</option>
+                    </select>
+                    
+                    <!-- Custom dropdown arrow -->
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Loading indicator for warehouse -->
+                    <div id="warehouse-loading" class="absolute inset-y-0 right-8 flex items-center hidden">
+                        <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
 
                 <x-shop::form.control-group.error ::name="controlName + '.warehouse'" />
             </x-shop::form.control-group>
@@ -288,6 +401,8 @@
                 },
 
                 loadAreas() {
+                    this.showLoading('area-loading');
+                    
                     fetch("{{ route('api.nova-poshta.areas') }}")
                         .then(response => response.json())
                         .then(data => {
@@ -298,12 +413,14 @@
                         })
                         .catch(error => {
                             console.error('Error loading areas:', error);
+                        })
+                        .finally(() => {
+                            this.hideLoading('area-loading');
                         });
                 },
 
                 onAreaChange(areaRef) {
                     console.log('Area changed to:', areaRef);
-                    
                     
                     // Update hidden field with multiple approaches
                     this.updateHiddenField('area', areaRef);
@@ -315,11 +432,9 @@
                         console.log('Directly updated area field:', hiddenAreaField.name, '=', areaRef);
                     }
                     
-                    // Clear city and warehouse
-                    this.clearSelect('nova-poshta-city');
-                    this.clearSelect('nova-poshta-warehouse');
-                    document.getElementById('nova-poshta-city').disabled = true;
-                    document.getElementById('nova-poshta-warehouse').disabled = true;
+                    // Reset dependent selects
+                    this.resetDependentSelects('nova-poshta-city', 'Спочатку виберіть область');
+                    this.resetDependentSelects('nova-poshta-warehouse', 'Спочатку виберіть місто');
                     
                     if (areaRef) {
                         this.loadCities(areaRef);
@@ -327,17 +442,33 @@
                 },
 
                 loadCities(areaRef) {
+                    this.showLoading('city-loading');
+                    
+                    // Update city select placeholder
+                    const citySelect = document.getElementById('nova-poshta-city');
+                    citySelect.innerHTML = '<option value="">Завантаження міст...</option>';
+                    
                     fetch(`{{ route('api.nova-poshta.cities') }}?area_ref=${areaRef}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log('Cities response:', data);
                             if (data.success) {
-                                this.populateSelect('nova-poshta-city', data.data);
-                                document.getElementById('nova-poshta-city').disabled = false;
+                                // Use requestAnimationFrame to ensure smooth DOM updates
+                                requestAnimationFrame(() => {
+                                    // Clear the loading text and populate with actual data
+                                    citySelect.innerHTML = '<option value="">Виберіть місто</option>';
+                                    this.populateSelect('nova-poshta-city', data.data);
+                                    citySelect.disabled = false;
+                                    citySelect.className = citySelect.className.replace('bg-gray-50 text-gray-500 cursor-not-allowed', 'bg-white text-gray-700 cursor-pointer');
+                                });
                             }
                         })
                         .catch(error => {
                             console.error('Error loading cities:', error);
+                            citySelect.innerHTML = '<option value="">Помилка завантаження міст</option>';
+                        })
+                        .finally(() => {
+                            this.hideLoading('city-loading');
                         });
                 },
 
@@ -354,9 +485,8 @@
                         console.log('Directly updated city field:', hiddenCityField.name, '=', cityRef);
                     }
                     
-                    // Clear warehouse
-                    this.clearSelect('nova-poshta-warehouse');
-                    document.getElementById('nova-poshta-warehouse').disabled = true;
+                    // Reset dependent select
+                    this.resetDependentSelects('nova-poshta-warehouse', 'Спочатку виберіть місто');
                     
                     if (cityRef) {
                         this.loadWarehouses(cityRef);
@@ -364,17 +494,33 @@
                 },
 
                 loadWarehouses(cityRef) {
+                    this.showLoading('warehouse-loading');
+                    
+                    // Update warehouse select placeholder
+                    const warehouseSelect = document.getElementById('nova-poshta-warehouse');
+                    warehouseSelect.innerHTML = '<option value="">Завантаження відділень...</option>';
+                    
                     fetch(`{{ route('api.nova-poshta.warehouses') }}?city_ref=${cityRef}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log('Warehouses response:', data);
                             if (data.success) {
-                                this.populateSelect('nova-poshta-warehouse', data.data);
-                                document.getElementById('nova-poshta-warehouse').disabled = false;
+                                // Use requestAnimationFrame to ensure smooth DOM updates
+                                requestAnimationFrame(() => {
+                                    // Clear the loading text and populate with actual data
+                                    warehouseSelect.innerHTML = '<option value="">Виберіть відділення</option>';
+                                    this.populateSelect('nova-poshta-warehouse', data.data);
+                                    warehouseSelect.disabled = false;
+                                    warehouseSelect.className = warehouseSelect.className.replace('bg-gray-50 text-gray-500 cursor-not-allowed', 'bg-white text-gray-700 cursor-pointer');
+                                });
                             }
                         })
                         .catch(error => {
                             console.error('Error loading warehouses:', error);
+                            warehouseSelect.innerHTML = '<option value="">Помилка завантаження відділень</option>';
+                        })
+                        .finally(() => {
+                            this.hideLoading('warehouse-loading');
                         });
                 },
 
@@ -399,18 +545,29 @@
                     const select = document.getElementById(selectId);
                     if (!select) return;
                     
-                    // Clear existing options except the first one
-                    while (select.children.length > 1) {
-                        select.removeChild(select.lastChild);
-                    }
+                    // Store the first option (placeholder)
+                    const firstOption = select.children[0];
                     
-                    // Add new options
-                    data.forEach(item => {
+                    // Clear all options
+                    select.innerHTML = '';
+                    
+                    // Add back the first option
+                    select.appendChild(firstOption);
+                    
+                    // Add new options immediately (no delay to prevent cursor issues)
+                    data.forEach((item) => {
                         const option = document.createElement('option');
                         option.value = item.ref;
                         option.textContent = item.description_ru || item.description;
+                        option.className = 'nova-poshta-option';
                         select.appendChild(option);
                     });
+                    
+                    // Add success state briefly
+                    select.classList.add('success');
+                    setTimeout(() => {
+                        select.classList.remove('success');
+                    }, 800);
                 },
 
                 clearSelect(selectId) {
@@ -552,6 +709,36 @@
                     if (warehouseSelect && warehouseSelect.value) {
                         this.updateHiddenField('warehouse', warehouseSelect.value);
                         this.address.warehouse = warehouseSelect.value;
+                    }
+                },
+
+                // Show loading indicator
+                showLoading(loadingId) {
+                    const loadingElement = document.getElementById(loadingId);
+                    if (loadingElement) {
+                        loadingElement.classList.remove('hidden');
+                    }
+                },
+
+                // Hide loading indicator
+                hideLoading(loadingId) {
+                    const loadingElement = document.getElementById(loadingId);
+                    if (loadingElement) {
+                        loadingElement.classList.add('hidden');
+                    }
+                },
+
+                // Reset dependent selects when parent changes
+                resetDependentSelects(selectId, placeholder) {
+                    const select = document.getElementById(selectId);
+                    if (select) {
+                        select.innerHTML = `<option value="">${placeholder}</option>`;
+                        select.value = '';
+                        select.disabled = true;
+                        select.className = select.className.replace('bg-white text-gray-700 cursor-pointer', 'bg-gray-50 text-gray-500 cursor-not-allowed');
+                        
+                        // Remove any state classes
+                        select.classList.remove('success', 'error');
                     }
                 }
             }

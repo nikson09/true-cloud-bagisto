@@ -153,6 +153,18 @@ class Shipping
      */
     public function isMethodCodeExists($shippingMethodCode)
     {
+        // Проверяем существующие shipping rates в корзине
+        if ($cart = Cart::getCart()) {
+            $existingRate = $cart->shipping_rates()
+                ->where('method', $shippingMethodCode)
+                ->first();
+            
+            if ($existingRate) {
+                return true;
+            }
+        }
+
+        // Если нет существующих rates, проверяем доступные методы доставки
         $shippingMethods = $this->collectRates()['shippingMethods'] ?? [];
 
         if (

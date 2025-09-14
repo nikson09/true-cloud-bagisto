@@ -84,14 +84,11 @@
                         id="steps-container"
                     >
                         <!-- Included Addresses Blade File -->
-                        <template v-if="['address', 'shipping', 'payment', 'review'].includes(currentStep)">
+                        <template v-if="['address', 'payment', 'review'].includes(currentStep)">
                             @include('shop::checkout.onepage.address')
                         </template>
 
-                        <!-- Included Shipping Methods Blade File -->
-                        <template v-if="cart.have_stockable_items && ['shipping', 'payment', 'review'].includes(currentStep)">
-                            @include('shop::checkout.onepage.shipping')
-                        </template>
+                        <!-- Shipping step removed - automatically selects first available method -->
 
                         <!-- Included Payment Methods Blade File -->
                         <template v-if="['payment', 'review'].includes(currentStep)">
@@ -188,18 +185,15 @@
 
                         this.canPlaceOrder = false;
 
-                        if (this.currentStep == 'shipping') {
-                            this.shippingMethods = null;
-                        } else if (this.currentStep == 'payment') {
+                        if (this.currentStep == 'payment') {
                             this.paymentMethods = null;
                         }
                     },
 
                     stepProcessed(data) {
-                        if (this.currentStep == 'shipping') {
-                            this.shippingMethods = data;
-                        } else if (this.currentStep == 'payment') {
-                            this.paymentMethods = data;
+                        if (this.currentStep == 'payment') {
+                            // Если data содержит payment_methods, используем их, иначе используем data как есть
+                            this.paymentMethods = data.payment_methods || data;
                         }
 
                         this.getCart();

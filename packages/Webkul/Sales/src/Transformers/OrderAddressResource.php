@@ -28,6 +28,8 @@ class OrderAddressResource extends JsonResource
             'email'        => $this->email,
             'phone'        => $this->phone,
             'vat_id'       => $this->vat_id,
+            'area'         => $this->area,
+            'warehouse'    => $this->warehouse,
         ];
     }
 }

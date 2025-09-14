@@ -199,6 +199,12 @@ return [
         'sort'       => 3,
         'icon'       => '',
     ], [
+        'key'        => 'marketing.communications.email_broadcast',
+        'name'       => 'admin::app.components.layouts.sidebar.email-broadcast',
+        'route'      => 'admin.marketing.communications.email-broadcast.index',
+        'sort'       => 4,
+        'icon'       => '',
+    ], [
         'key'        => 'marketing.search_seo',
         'name'       => 'admin::app.components.layouts.sidebar.search-seo',
         'route'      => 'admin.marketing.search_seo.url_rewrites.index',

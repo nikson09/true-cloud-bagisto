@@ -1066,6 +1066,23 @@ return [
 
             'payment' => [
                 'payment-method' => 'Спосіб оплати',
+                'select-payment-method' => 'Оберіть спосіб оплати',
+                'payment-details' => 'Деталі оплати',
+                'card-number' => 'Номер картки',
+                'expiry-date' => 'Термін дії',
+                'cvv' => 'CVV',
+                'cardholder-name' => 'Ім\'я власника картки',
+                'billing-address' => 'Адреса виставлення рахунку',
+                'same-as-shipping' => 'Така ж, як адреса доставки',
+                'place-order' => 'Оформити замовлення',
+                'processing-payment' => 'Обробка платежу...',
+                'payment-success' => 'Платіж успішно оброблено',
+                'payment-failed' => 'Помилка обробки платежу',
+                'try-again' => 'Спробувати знову',
+                
+                // Методи оплати
+                'cash-on-delivery' => 'Оплата при отриманні',
+                'money-transfer' => 'Грошовий переказ',
             ],
 
             'shipping' => [

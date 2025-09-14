@@ -1066,6 +1066,23 @@ return [
 
             'payment' => [
                 'payment-method' => 'Способ оплаты',
+                'select-payment-method' => 'Выберите способ оплаты',
+                'payment-details' => 'Детали оплаты',
+                'card-number' => 'Номер карты',
+                'expiry-date' => 'Срок действия',
+                'cvv' => 'CVV',
+                'cardholder-name' => 'Имя владельца карты',
+                'billing-address' => 'Адрес выставления счета',
+                'same-as-shipping' => 'Тот же, что и адрес доставки',
+                'place-order' => 'Оформить заказ',
+                'processing-payment' => 'Обработка платежа...',
+                'payment-success' => 'Платеж успешно обработан',
+                'payment-failed' => 'Ошибка обработки платежа',
+                'try-again' => 'Попробовать снова',
+                
+                // Методы оплаты
+                'cash-on-delivery' => 'Оплата наличными при доставке',
+                'money-transfer' => 'Денежный перевод',
             ],
 
             'shipping' => [

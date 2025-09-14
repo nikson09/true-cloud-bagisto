@@ -23,7 +23,7 @@
                             />
                         @else
                             <img
-                                src="/logo.png"
+                                src="{{ asset('logo.png') }}"
                                 alt="True Cloud"
                                 width="131"
                                 height="29"

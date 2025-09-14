@@ -21,6 +21,26 @@ class MoneyTransfer extends Payment
     public function getRedirectUrl() {}
 
     /**
+     * Get payment method title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return trans('shop::app.checkout.onepage.payment.money-transfer') ?: $this->getConfigData('title');
+    }
+
+    /**
+     * Get payment method description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return trans('shop::app.checkout.onepage.payment.money-transfer') ?: $this->getConfigData('description');
+    }
+
+    /**
      * Returns payment method additional information.
      *
      * @return array

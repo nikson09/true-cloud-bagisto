@@ -35,6 +35,26 @@ class CashOnDelivery extends Payment
     }
 
     /**
+     * Get payment method title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return trans('shop::app.checkout.onepage.payment.cash-on-delivery') ?: $this->getConfigData('title');
+    }
+
+    /**
+     * Get payment method description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return trans('shop::app.checkout.onepage.payment.cash-on-delivery') ?: $this->getConfigData('description');
+    }
+
+    /**
      * Get payment method image.
      *
      * @return array

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\Marketing\Communications\CampaignController;
+use Webkul\Admin\Http\Controllers\Marketing\Communications\EmailBroadcastController;
 use Webkul\Admin\Http\Controllers\Marketing\Communications\EventController;
 use Webkul\Admin\Http\Controllers\Marketing\Communications\SubscriptionController;
 use Webkul\Admin\Http\Controllers\Marketing\Communications\TemplateController;
@@ -135,6 +136,17 @@ Route::prefix('marketing')->group(function () {
             Route::put('edit', 'update')->name('admin.marketing.communications.subscribers.update');
 
             Route::delete('edit/{id}', 'destroy')->name('admin.marketing.communications.subscribers.delete');
+        });
+
+        /**
+         * Email broadcast routes.
+         */
+        Route::controller(EmailBroadcastController::class)->prefix('email-broadcast')->group(function () {
+            Route::get('', 'index')->name('admin.marketing.communications.email-broadcast.index');
+
+            Route::post('send', 'send')->name('admin.marketing.communications.email-broadcast.send');
+
+            Route::get('group-count/{groupId}', 'getGroupCustomerCount')->name('admin.marketing.communications.email-broadcast.group-count');
         });
     });
 

@@ -19,13 +19,13 @@
                             <img
                                 src="{{ Storage::url($logo) }}"
                                 alt="{{ config('app.name') }}"
-                                style="height: 40px; width: 110px;"
+                                style="height: 50px; max-width: 200px;"
                             />
                         @else
                             <img
-                                src="{{ bagisto_asset('images/logo.svg', 'admin') }}"
+                                src="{{ asset('logo.png') }}"
                                 alt="{{ config('app.name') }}"
-                                style="width: 156px;height: 40px;"
+                                style="height: 50px; max-width: 200px;"
                             />
                         @endif
                     </a>

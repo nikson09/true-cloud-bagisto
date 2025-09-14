@@ -202,6 +202,13 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'billing.area' => 'область',
+        'billing.city' => 'город',
+        'billing.warehouse' => 'отделение Новой Почты',
+        'shipping.area' => 'область',
+        'shipping.city' => 'город',
+        'shipping.warehouse' => 'отделение Новой Почты',
+    ],
 
 ];

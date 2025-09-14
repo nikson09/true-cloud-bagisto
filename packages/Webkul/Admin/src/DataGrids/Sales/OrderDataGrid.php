@@ -39,7 +39,9 @@ class OrderDataGrid extends DataGrid
                 'customer_email',
                 'orders.cart_id as items',
                 DB::raw('CONCAT('.DB::getTablePrefix().'orders.customer_first_name, " ", '.DB::getTablePrefix().'orders.customer_last_name) as full_name'),
-                DB::raw('CONCAT('.DB::getTablePrefix().'order_address_billing.city, ", ", '.DB::getTablePrefix().'order_address_billing.state,", ", '.DB::getTablePrefix().'order_address_billing.country) as location')
+                DB::raw('CONCAT('.DB::getTablePrefix().'order_address_billing.city, ", ", '.DB::getTablePrefix().'order_address_billing.state,", ", '.DB::getTablePrefix().'order_address_billing.country) as location'),
+                'order_address_shipping.area as nova_poshta_area',
+                'order_address_shipping.warehouse as nova_poshta_warehouse'
             )
             ->groupBy('orders.id');
 
@@ -187,6 +189,22 @@ class OrderDataGrid extends DataGrid
             'index'      => 'location',
             'label'      => trans('admin::app.sales.orders.index.datagrid.location'),
             'type'       => 'string',
+        ]);
+
+        $this->addColumn([
+            'index'      => 'nova_poshta_area',
+            'label'      => trans('admin::app.sales.orders.index.datagrid.nova-poshta-area'),
+            'type'       => 'string',
+            'searchable' => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'nova_poshta_warehouse',
+            'label'      => trans('admin::app.sales.orders.index.datagrid.nova-poshta-warehouse'),
+            'type'       => 'string',
+            'searchable' => true,
+            'filterable' => true,
         ]);
 
         $this->addColumn([

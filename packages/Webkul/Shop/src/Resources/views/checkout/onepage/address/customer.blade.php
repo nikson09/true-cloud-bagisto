@@ -375,7 +375,7 @@
 
             methods: {
                 getCustomerSavedAddresses() {
-                    this.$axios.get('{{ route('shop.api.customers.account.addresses.index') }}')
+                    this.$axios.get('{{ route("shop.api.customers.account.addresses.index") }}')
                         .then(response => {
                             this.initializeAddresses('billing', structuredClone(response.data.data));
 
@@ -502,7 +502,7 @@
                 createCustomerAddress(params, { setErrors }) {
                     this.isStoring = true;
 
-                    return this.$axios.post('{{ route('shop.api.customers.account.addresses.store') }}', params)
+                    return this.$axios.post('{{ route("shop.api.customers.account.addresses.store") }}', params)
                         .then((response) => {
                             this.isStoring = false;
 
@@ -528,7 +528,7 @@
                 updateCustomerAddress(id, params, { setErrors }) {
                     this.isStoring = true;
 
-                    return this.$axios.put('{{ route('shop.api.customers.account.addresses.update') }}/' + id, params)
+                    return this.$axios.put('{{ route("shop.api.customers.account.addresses.update") }}/' + id, params)
                         .then((response) => {
                             this.isStoring = false;
 
@@ -574,11 +574,10 @@
                             if (response.data.data.redirect_url) {
                                 window.location.href = response.data.data.redirect_url;
                             } else {
-                                if (this.cart.have_stockable_items) {
-                                    this.$emit('processed', response.data.data.shippingMethods);
-                                } else {
-                                    this.$emit('processed', response.data.data.payment_methods);
-                                }
+                                // Always emit payment methods since shipping is handled automatically
+                                // Если response содержит payment_methods, используем их, иначе используем весь объект
+                                const paymentData = response.data.data.payment_methods || response.data.data;
+                                this.$emit('processed', paymentData);
                             }
                         })
                         .catch(error => {
@@ -616,11 +615,8 @@
                 },
 
                 moveToNextStep() {
-                    if (this.cart.have_stockable_items) {
-                        this.$emit('processing', 'shipping');
-                    } else {
-                        this.$emit('processing', 'payment');
-                    }
+                    // Always go to payment step - shipping is handled automatically
+                    this.$emit('processing', 'payment');
                 },
             }
         });

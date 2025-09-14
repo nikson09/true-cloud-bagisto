@@ -30,7 +30,7 @@
             href="{{ route('shop.home.index') }}"
             aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.bagisto')"
         >
-            <img src="/logo.png" alt="True Cloud" class="h-12 w-auto" style="margin-right: 10px;" >
+            <img src="{{ asset('logo.png') }}" alt="True Cloud" class="h-12 w-auto" style="margin-right: 10px;" >
             <div class="block">
                 <div class="text-xl font-extrabold tracking-tight text-slate-900">True Cloud</div>
                 <div class="text-xs text-slate-500 font-medium">EST. 2015</div>
