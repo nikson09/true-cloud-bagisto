@@ -22,15 +22,14 @@
         <div class="flex items-center gap-x-14 max-[1180px]:gap-x-9">
             <a
                 href="{{ route('shop.home.index') }}"
-                class="m-[0_auto_20px_auto]"
+                class="m-[0_auto_20px_auto] flex items-center gap-2"
                 aria-label="True Cloud"
             >
-                <img
-                    src="/logo.png"
-                    alt="True Cloud"
-                    width="131"
-                    height="29"
-                >
+                <img src="/logo.png" alt="True Cloud" class="h-12 w-auto" style="margin-right: 10px;">
+                <div class="block">
+                    <div class="text-xl font-extrabold tracking-tight text-slate-900">True Cloud</div>
+                    <div class="text-xs text-slate-500 font-medium">EST. 2015</div>
+                </div>
             </a>
         </div>
 

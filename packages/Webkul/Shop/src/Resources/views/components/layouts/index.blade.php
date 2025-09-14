@@ -44,8 +44,24 @@
 
         <link
             rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
             sizes="16x16"
-            href="{{ core()->getCurrentChannel()->favicon_url ?? bagisto_asset('images/favicon.ico') }}"
+            href="/favicon.png"
+        />
+        <link
+            rel="shortcut icon"
+            href="/favicon.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/favicon.png"
         />
 
         @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])

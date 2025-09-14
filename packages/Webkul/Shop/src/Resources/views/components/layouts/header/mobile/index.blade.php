@@ -8,6 +8,26 @@
     $showWishlist = (bool) core()->getConfigData('customer.settings.wishlist.wishlist_option');
 @endphp
 
+<!-- Mobile Topbar -->
+<div class="tc-mobile-topbar-container w-full lg:hidden">
+    <div class="tc-mobile-topbar-wrapper container flex items-center justify-between px-4 py-2">
+        <div class="tc-mobile-topbar-left">
+            <span class="tc-mobile-topbar-delivery">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tc-mobile-topbar-icon">
+                    <path d="M12 6v6l4 2"/>
+                    <circle cx="12" cy="12" r="10"/>
+                </svg>
+                @lang('shop::app.components.layouts.header.desktop.bottom.topbar.delivery')
+            </span>
+        </div>
+        <div class="tc-mobile-topbar-right">
+            <a href="javascript:void(0)" onClick="changeLocale('ru')" class="tc-mobile-topbar-link">RU</a>
+            <a href="javascript:void(0)" onClick="changeLocale('uk')" class="tc-mobile-topbar-link">UA</a>
+            <a href="tel:+380111222333" class="tc-mobile-topbar-link">+380 111 222 333</a>
+        </div>
+    </div>
+</div>
+
 <div class="flex flex-wrap gap-4 px-4 pb-4 pt-6 shadow-sm lg:hidden">
     <div class="flex w-full items-center justify-between">
         <!-- Left Navigation -->
@@ -23,13 +43,14 @@
 
             <a
                 href="{{ route('shop.home.index') }}"
+                class="flex items-center gap-2"
                 aria-label="True Cloud"
             >
-                <img
-                    src="/logo.png"
-                    alt="True Cloud"
-                    style="height: 30vw; width: auto;"
-                >
+                <img src="/logo.png" alt="True Cloud" class="h-8 w-auto" style="margin-right: 6px;">
+                <div class="block">
+                    <div class="text-sm font-extrabold tracking-tight text-slate-900">True Cloud</div>
+                    <div class="text-xs text-slate-500 font-medium">EST. 2015</div>
+                </div>
             </a>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.mobile.logo.after') !!}
@@ -243,12 +264,12 @@
 
             <x-slot:header>
                 <div class="flex items-center justify-between">
-                    <a href="{{ route('shop.home.index') }}">
-                        <img
-                            src="/logo.png"
-                            alt="True Cloud"
-                            style="height: 30vw; width: auto;"
-                        >
+                    <a href="{{ route('shop.home.index') }}" class="flex items-center gap-2">
+                        <img src="/logo.png" alt="True Cloud" class="h-8 w-auto" style="margin-right: 6px;">
+                        <div class="block">
+                            <div class="text-sm font-extrabold tracking-tight text-slate-900">True Cloud</div>
+                            <div class="text-xs text-slate-500 font-medium">EST. 2015</div>
+                        </div>
                     </a>
                 </div>
             </x-slot>
@@ -540,4 +561,64 @@
             },
         });
     </script>
+
+    <style type="text/css">
+        /* Mobile Topbar Styles - tc-mobile- prefix for True Cloud Mobile */
+        .tc-mobile-topbar-container {
+            background-color: rgba(15, 23, 42, 0.95);
+            color: rgb(226, 232, 240);
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+
+        .tc-mobile-topbar-wrapper {
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            max-width: 80rem;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .tc-mobile-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tc-mobile-topbar-delivery {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .tc-mobile-topbar-icon {
+            opacity: 0.8;
+        }
+
+        .tc-mobile-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tc-mobile-topbar-link {
+            color: inherit;
+            text-decoration: inherit;
+            font-size: 0.75rem;
+        }
+
+        .tc-mobile-topbar-link:hover {
+            color: rgb(255, 255, 255);
+        }
+
+        /* Hide mobile topbar on desktop */
+        @media (min-width: 1024px) {
+            .tc-mobile-topbar-container {
+                display: none;
+            }
+        }
+    </style>
 @endPushOnce
