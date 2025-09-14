@@ -23,7 +23,7 @@
 
     <div class="container mt-20 max-1180:px-5 max-md:mt-12">
         {!! view_render_event('bagisto.shop.customers.reset_password.logo.before') !!}
-        
+
         <!-- Company Logo -->
         <div class="flex items-center gap-x-14 max-[1180px]:gap-x-9">
             <a
@@ -147,9 +147,5 @@
             {!! view_render_event('bagisto.shop.customers.reset_password.after') !!}
 
         </div>
-
-        <p class="mb-4 mt-8 text-center text-xs text-zinc-500">
-            @lang('shop::app.customers.reset-password.footer', ['current_year'=> date('Y') ])
-        </p>
     </div>
 </x-shop::layouts>
