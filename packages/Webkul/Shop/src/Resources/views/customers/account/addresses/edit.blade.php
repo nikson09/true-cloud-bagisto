@@ -48,57 +48,114 @@
 
     @pushOnce('styles')
         <style>
-            /* Nova Poshta Select Styles */
-            .nova-poshta-select {
-                transition: all 0.2s ease-in-out;
-            }
             
             .nova-poshta-select:hover:not(:disabled) {
                 transform: translateY(-1px);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
             }
-            
-            .nova-poshta-select:focus {
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+
+            /* Keep dropdown open when hovering over it */
+            .vs__dropdown-menu {
+                z-index: 9999 !important;
+                position: absolute !important;
+                background: white !important;
+                border: 1px solid #e5e7eb !important;
+                border-radius: 8px !important;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+                max-height: 300px !important;
+                overflow-y: auto !important;
+                margin-top: 4px !important;
             }
-            
-            .nova-poshta-select:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
+
+            .vs__dropdown-menu:hover {
+                z-index: 9999 !important;
             }
-            
-            /* Loading animation */
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
+
+            /* v-select control styles */
+            .vs__control {
+                min-height: 48px !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 8px !important;
+                background: white !important;
+                transition: all 0.2s ease !important;
             }
-            
-            .animate-spin {
-                animation: spin 1s linear infinite;
+
+            .vs__control:hover {
+                border-color: #9ca3af !important;
             }
-            
-            /* Success state */
-            .nova-poshta-select.success {
-                border-color: #10b981;
-                background-color: #f0fdf4;
+
+            .vs__control--focused {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
             }
-            
-            /* Error state */
-            .nova-poshta-select.error {
-                border-color: #ef4444;
-                background-color: #fef2f2;
+
+            .vs__control--disabled {
+                background-color: #f9fafb !important;
+                border-color: #e5e7eb !important;
+                color: #9ca3af !important;
             }
-            
-            /* Subtle fade in animation for options */
-            .nova-poshta-option {
-                animation: fadeIn 0.2s ease-out;
+
+            /* v-select dropdown options */
+            .vs__dropdown-option {
+                padding: 12px 16px !important;
+                transition: all 0.2s ease !important;
+                border-bottom: 1px solid #f3f4f6 !important;
             }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+
+            .vs__dropdown-option:last-child {
+                border-bottom: none !important;
             }
+
+            .vs__dropdown-option:hover {
+                background-color: #f8fafc !important;
+                color: #1f2937 !important;
+            }
+
+            .vs__dropdown-option--highlight {
+                background-color: #3b82f6 !important;
+                color: white !important;
+            }
+
+            .vs__dropdown-option--selected {
+                background-color: #dbeafe !important;
+                color: #1e40af !important;
+                font-weight: 500 !important;
+            }
+
+            /* v-select search input */
+            .vs__search {
+                padding: 12px 16px !important;
+                font-size: 14px !important;
+                border: none !important;
+                outline: none !important;
+                background: transparent !important;
+            }
+
+            .vs__search::placeholder {
+                color: #9ca3af !important;
+            }
+
+            /* v-select clear button */
+            .vs__clear {
+                color: #9ca3af !important;
+                transition: color 0.2s ease !important;
+            }
+
+            .vs__clear:hover {
+                color: #6b7280 !important;
+            }
+
+            /* v-select open indicator */
+            .vs__open-indicator {
+                color: #9ca3af !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .vs__open-indicator:hover {
+                color: #6b7280 !important;
+            }
+
         </style>
     @endPushOnce
 
@@ -114,24 +171,6 @@
             >
                 {!! view_render_event('bagisto.shop.customers.account.address.edit_form_controls.before', ['address' => $address]) !!}
 
-                <!-- Company Name -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label>
-                        @lang('shop::app.customers.account.addresses.edit.company-name')
-                    </x-shop::form.control-group.label>
-
-                    <x-shop::form.control-group.control
-                        type="text"
-                        name="company_name"
-                        :value="old('company_name') ?? $address->company_name"
-                        :label="trans('shop::app.customers.account.addresses.edit.company-name')"
-                        :placeholder="trans('shop::app.customers.account.addresses.edit.company-name')"
-                    />
-
-                    <x-shop::form.control-group.error control-name="company_name" />
-                </x-shop::form.control-group>
-
-                {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.company_name.after', ['address' => $address]) !!}
 
                 <!-- First Name -->
                 <x-shop::form.control-group>
@@ -261,6 +300,15 @@
                     <x-shop::form.control-group.error control-name="warehouse" />
                 </x-shop::form.control-group>
 
+                <!-- Hidden fields for compatibility -->
+                <x-shop::form.control-group class="hidden">
+                    <x-shop::form.control-group.control
+                        type="text"
+                        name="address[]"
+                        :value="collect(old('address'))->first() ?? $address->address"
+                    />
+                </x-shop::form.control-group>
+
                 <!-- Hidden fields for Ukraine -->
                 <x-shop::form.control-group class="hidden">
                     <x-shop::form.control-group.control
@@ -271,176 +319,28 @@
                     <x-shop::form.control-group.control
                         type="text"
                         name="state"
-                        v-model="selectedAreaLabel"
+                        v-model="area"
                     />
                     <x-shop::form.control-group.control
                         type="text"
                         name="area"
-                        v-model="selectedAreaLabel"
+                        v-model="area"
                     />
                     <x-shop::form.control-group.control
                         type="text"
                         name="city"
-                        v-model="selectedCityLabel"
+                        v-model="city"
                     />
                     <x-shop::form.control-group.control
                         type="text"
                         name="warehouse"
-                        v-model="selectedWarehouseLabel"
+                        v-model="warehouse"
                     />
                 </x-shop::form.control-group>
 
-                <!-- Vat ID -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label>
-                        @lang('shop::app.customers.account.addresses.edit.vat-id')
-                    </x-shop::form.control-group.label>
 
-                    <x-shop::form.control-group.control
-                        type="text"
-                        name="vat_id"
-                        :value="old('vat_id') ?? $address->vat_id"
-                        :label="trans('shop::app.customers.account.addresses.edit.vat-id')"
-                        :placeholder="trans('shop::app.customers.account.addresses.edit.vat-id')"
-                    />
 
-                    <x-shop::form.control-group.error control-name="vat_id" />
-                </x-shop::form.control-group>
 
-                {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.vat_id.after', ['address' => $address]) !!}
-
-                @php
-                    $addresses = explode(PHP_EOL, $address->address);
-                @endphp
-
-                <!-- Street Address -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="required">
-                        @lang('shop::app.customers.account.addresses.edit.street-address')
-                    </x-shop::form.control-group.label>
-
-                    <x-shop::form.control-group.control
-                        type="text"
-                        name="address[]"
-                        :value="collect(old('address'))->first() ?? $addresses[0]"
-                        rules="required|address"
-                        :label="trans('shop::app.customers.account.addresses.edit.street-address')"
-                        :placeholder="trans('shop::app.customers.account.addresses.edit.street-address')"
-                    />
-
-                    <x-shop::form.control-group.error control-name="address[]" />
-                </x-shop::form.control-group>
-
-                @if (
-                    core()->getConfigData('customer.address.information.street_lines')
-                    && core()->getConfigData('customer.address.information.street_lines') > 1
-                )
-                    @for ($i = 1; $i < core()->getConfigData('customer.address.information.street_lines'); $i++)
-                        <x-shop::form.control-group.control
-                            type="text"
-                            name="address[{{ $i }}]"
-                            :value="old('address[{{$i}}]', $addresses[$i] ?? '')"
-                            rules="address"
-                            :label="trans('shop::app.customers.account.addresses.edit.street-address')"
-                            :placeholder="trans('shop::app.customers.account.addresses.edit.street-address')"
-                        />
-
-                        <x-shop::form.control-group.error
-                            class="mb-2"
-                            name="address[{{ $i }}]"
-                        />
-                    @endfor
-                @endif
-
-                {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.street-addres.after', ['address' => $address]) !!}
-
-                <!-- Country Name -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="{{ core()->isCountryRequired() ? 'required' : '' }}">
-                        @lang('shop::app.customers.account.addresses.edit.country')
-                    </x-shop::form.control-group.label>
-
-                    <x-shop::form.control-group.control
-                        type="select"
-                        name="country"
-                        rules="{{ core()->isStateRequired() ? 'required' : '' }}"
-                        v-model="addressData.country"
-                        :aria-label="trans('shop::app.customers.account.addresses.edit.country')"
-                        :label="trans('shop::app.customers.account.addresses.edit.country')"
-                    >
-                        @foreach (core()->countries() as $country)
-                            <option 
-                                {{ $country->code === config('app.default_country') ? 'selected' : '' }}  
-                                value="{{ $country->code }}"
-                            >
-                                {{ $country->name }}
-                            </option>
-                        @endforeach
-                    </x-shop::form.control-group.control>
-
-                    <x-shop::form.control-group.error control-name="country" />
-                </x-shop::form.control-group>
-
-                {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.country.after', ['address' => $address]) !!}
-
-                <!-- State Name -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="{{ core()->isStateRequired() ? 'required' : '' }}">
-                        @lang('shop::app.customers.account.addresses.edit.state')
-                    </x-shop::form.control-group.label>
-                    <template v-if="haveStates()">
-                        <x-shop::form.control-group.control
-                            type="select"
-                            name="state"
-                            id="state"
-                            rules="{{ core()->isStateRequired() ? 'required' : '' }}"
-                            v-model="addressData.state"
-                            :label="trans('shop::app.customers.account.addresses.edit.state')"
-                            :placeholder="trans('shop::app.customers.account.addresses.edit.state')"
-                        >
-                            <option 
-                                v-for='(state, index) in countryStates[addressData.country]'
-                                :value="state.code"
-                            >
-                                @{{ state.default_name }}
-                            </option>
-                        </x-shop::form.control-group.control>
-                    </template>
-
-                    <template v-else>
-                        <x-shop::form.control-group.control
-                            type="text"
-                            name="state"
-                            rules="{{ core()->isStateRequired() ? 'required' : '' }}"
-                            :value="old('state') ?? $address->state"
-                            :label="trans('shop::app.customers.account.addresses.edit.state')"
-                            :placeholder="trans('shop::app.customers.account.addresses.edit.state')"
-                        />
-                    </template>
-
-                    <x-shop::form.control-group.error control-name="state" />
-                </x-shop::form.control-group>
-
-                {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.state.after', ['address' => $address]) !!}
-
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="required">
-                        @lang('shop::app.customers.account.addresses.edit.city')
-                    </x-shop::form.control-group.label>
-
-                    <x-shop::form.control-group.control
-                        type="text"
-                        name="city"
-                        rules="required"
-                        :value="old('city') ?? $address->city"
-                        :label="trans('shop::app.customers.account.addresses.edit.city')"
-                        :placeholder="trans('shop::app.customers.account.addresses.edit.city')"
-                    />
-
-                    <x-shop::form.control-group.error control-name="city" />
-                </x-shop::form.control-group>
-
-                {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.city.after', ['address' => $address]) !!}
 
                 <x-shop::form.control-group>
                     <x-shop::form.control-group.label class="{{ core()->isPostCodeRequired() ? 'required' : '' }}">
@@ -498,12 +398,6 @@
 
                 data() {
                     return {
-                        addressData: {
-                            country: "{{ old('country') ?? $address->country }}",
-                            state: "{{ old('state') ?? $address->state }}",
-                        },
-                        countryStates: {!! json_encode(core()->groupedStatesByCountries()) !!},
-                        
                         // Nova Poshta data
                         selectedArea: null,
                         selectedCity: null,
@@ -517,19 +411,19 @@
                         selectedAreaLabel: '',
                         selectedCityLabel: '',
                         selectedWarehouseLabel: '',
+                        area: '',
+                        city: '',
+                        warehouse: '',
                     };
                 },
 
                 mounted() {
                     // Initialize Nova Poshta form
                     this.initNovaPoshtaForm();
+                    this.fixDropdownZIndex();
                 },
     
                 methods: {
-                    haveStates() {
-                        return !!this.countryStates[this.addressData.country]?.length;
-                    },
-
                     initNovaPoshtaForm() {
                         console.log('Initializing Nova Poshta form for customer address editing');
                         // Load areas
@@ -560,8 +454,6 @@
 
                     onAreaChange(option) {
                         console.log('Area changed to:', option.label);
-                        console.log('AreaRef type:', typeof option.value);
-                        console.log('AreaRef value:', option.value);
                         
                         // Reset dependent selects
                         this.selectedCity = null;
@@ -572,8 +464,7 @@
                         if (option.value) {
                             console.log('Loading cities for area:', option.value);
                             this.loadCities(option.value);
-                            document.querySelector('input[name="area"]').setAttribute('value', option.label);
-                            document.querySelector('input[name="state"]').setAttribute('value', option.label);
+                            this.area = option.label;
                             this.selectedAreaLabel = option.label;
                         } else {
                             console.log('No area selected, not loading cities');
@@ -622,7 +513,7 @@
                         
                         if (option.value) {
                             this.loadWarehouses(option.value);
-                            document.querySelector('input[name="city"]').setAttribute('value', option.label);
+                            this.city = option.label;
                             this.selectedCityLabel = option.label;
                         }
                     },
@@ -651,10 +542,60 @@
 
                     onWarehouseChange(option) {
                         console.log('Warehouse changed to:', option.label);
-                        console.log('Warehouse value:', document.querySelector('input[name="warehouse"]').value);
-                        document.querySelector('input[name="warehouse"]').setAttribute('value', option.label);
-                        console.log('Warehouse value:', document.querySelector('input[name="warehouse"]').value);
+                        
+                        // Update Vue data
+                        this.warehouse = option.label;
                         this.selectedWarehouseLabel = option.label;
+                    },
+
+                    fixDropdownZIndex() {
+                        // Use MutationObserver to watch for dropdown menu changes
+                        const observer = new MutationObserver((mutations) => {
+                            mutations.forEach((mutation) => {
+                                if (mutation.type === 'childList') {
+                                    mutation.addedNodes.forEach((node) => {
+                                        if (node.nodeType === Node.ELEMENT_NODE) {
+                                            const dropdown = node.querySelector ? node.querySelector('.vs__dropdown-menu') : null;
+                                            if (dropdown) {
+                                                dropdown.style.position = 'absolute';
+                                                dropdown.style.zIndex = '9999';
+                                                
+                                                // Prevent dropdown from closing on mouse leave
+                                                dropdown.addEventListener('mouseenter', (e) => {
+                                                    e.stopPropagation();
+                                                });
+                                                
+                                                dropdown.addEventListener('mouseleave', (e) => {
+                                                    e.stopPropagation();
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                        // Start observing
+                        observer.observe(document.body, {
+                            childList: true,
+                            subtree: true
+                        });
+
+                        // Also fix existing dropdowns
+                        setTimeout(() => {
+                            document.querySelectorAll('.vs__dropdown-menu').forEach(dropdown => {
+                                dropdown.style.position = 'absolute';
+                                dropdown.style.zIndex = '9999';
+                                
+                                dropdown.addEventListener('mouseenter', (e) => {
+                                    e.stopPropagation();
+                                });
+                                
+                                dropdown.addEventListener('mouseleave', (e) => {
+                                    e.stopPropagation();
+                                });
+                            });
+                        }, 100);
                     },
 
                 },
