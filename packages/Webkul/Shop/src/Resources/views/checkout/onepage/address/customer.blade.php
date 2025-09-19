@@ -88,7 +88,10 @@
 
                                     <p class="mt-6 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
                                         <template v-if="address.address">
-                                            @{{ address.address.join(', ') }},
+                                            @{{ address.address.join(' ') }}<template v-if="address.warehouse"> @{{ address.warehouse }}</template>,
+                                        </template>
+                                        <template v-else-if="address.warehouse">
+                                            @{{ address.warehouse }},
                                         </template>
 
                                         @{{ address.city }},
@@ -208,7 +211,10 @@
 
                                             <p class="mt-6 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
                                                 <template v-if="address.address">
-                                                    @{{ address.address.join(', ') }},
+                                                    @{{ address.address.join(' ') }}<template v-if="address.warehouse"> @{{ address.warehouse }}</template>,
+                                                </template>
+                                                <template v-else-if="address.warehouse">
+                                                    @{{ address.warehouse }},
                                                 </template>
 
                                                 @{{ address.city }},
@@ -325,6 +331,16 @@
                 </x-shop::form>
             </template>
         </template>
+
+        <template>
+            <input type="hidden" name="billing.area" v-model="billing.area" />
+            <input type="hidden" name="billing.city" v-model="billing.city" />
+            <input type="hidden" name="billing.warehouse" v-model="billing.warehouse" />
+            <input type="hidden" name="billing.state" v-model="billing.state" />
+            <input type="hidden" name="shipping.area" v-model="shipping.area" />
+            <input type="hidden" name="shipping.city" v-model="shipping.city" />
+            <input type="hidden" name="shipping.warehouse" v-model="shipping.warehouse" />
+        </template>
     </script>
 
     <script type="module">
@@ -360,6 +376,20 @@
                     isLoading: true,
 
                     isStoring: false,
+
+                    billing: {
+                        area: '',
+                        city: '',
+                        warehouse: '',
+                        state: ''
+                    },
+
+                    shipping: {
+                        area: '',
+                        city: '',
+                        warehouse: '',
+                        state: ''
+                    }
                 }
             },
 
@@ -371,15 +401,24 @@
 
             mounted() {
                 this.getCustomerSavedAddresses();
+                
+                // Initialize Nova Poshta form when component is mounted
+                this.$nextTick(() => {
+                    this.initNovaPoshtaForm();
+                });
             },
 
             methods: {
                 getCustomerSavedAddresses() {
                     this.$axios.get('{{ route("shop.api.customers.account.addresses.index") }}')
                         .then(response => {
+                            console.log('Loaded customer addresses:', response.data.data);
+                            
                             this.initializeAddresses('billing', structuredClone(response.data.data));
 
                             this.initializeAddresses('shipping', structuredClone(response.data.data));
+
+                            console.log('Initialized addresses:', this.customerSavedAddresses);
 
                             if (! this.customerSavedAddresses.billing.length) {
                                 this.activeAddressForm = 'billing';
@@ -425,7 +464,14 @@
                 updateOrCreateAddress(params, { setErrors }) {
                     this.$emit('processing', 'address');
 
+                    console.log('Original params:', params);
+                    
+                    // Collect Nova Poshta data from select elements
+                    this.collectNovaPoshtaData(params);
+
                     params = params[this.activeAddressForm];
+
+                    console.log('Updated params with Nova Poshta data:', params);
 
                     let address = this.customerSavedAddresses[this.activeAddressForm].find(address => {
                         return address.id == params.id;
@@ -552,6 +598,11 @@
                 },
 
                 addAddressToCart(params, { setErrors }) {
+                    console.log('Original params for addAddressToCart:', params);
+                    
+                    // Collect Nova Poshta data from select elements
+                    this.collectNovaPoshtaData(params);
+
                     let payload = {
                         billing: {
                             ...this.getSelectedAddress('billing', params.billing.id),
@@ -562,6 +613,29 @@
                     if (params.shipping !== undefined) {
                         payload.shipping = this.getSelectedAddress('shipping', params.shipping.id);
                     }
+
+                    // Merge Nova Poshta data from params into payload
+                    if (params.billing) {
+                        payload.billing = {
+                            ...payload.billing,
+                            area: params.billing.area || payload.billing.area,
+                            city: params.billing.city || payload.billing.city,
+                            warehouse: params.billing.warehouse || payload.billing.warehouse,
+                            state: params.billing.state || payload.billing.state
+                        };
+                    }
+
+                    if (params.shipping && payload.shipping) {
+                        payload.shipping = {
+                            ...payload.shipping,
+                            area: params.shipping.area || payload.shipping.area,
+                            city: params.shipping.city || payload.shipping.city,
+                            warehouse: params.shipping.warehouse || payload.shipping.warehouse,
+                            state: params.shipping.state || payload.shipping.state
+                        };
+                    }
+
+                    console.log('Updated payload with Nova Poshta data:', payload);
 
                     this.isStoring = true;
 
@@ -604,20 +678,328 @@
                 getSelectedAddress(type, id) {
                     let address = Object.assign({}, this.customerSavedAddresses[type].find(address => address.id == id));
 
+                    console.log(`Getting selected ${type} address with id ${id}:`, address);
+
                     if (id == 0) {
                         address.id = null;
                     }
 
-                    return {
+                    const result = {
                         ...address,
                         default_address: 0,
                     };
+
+                    console.log(`Returning ${type} address:`, result);
+                    return result;
                 },
 
                 moveToNextStep() {
                     // Always go to payment step - shipping is handled automatically
                     this.$emit('processing', 'payment');
                 },
+
+                initNovaPoshtaForm() {
+                    // Wait for DOM to be ready
+                    this.$nextTick(() => {
+                        const areaSelect = document.getElementById('nova-poshta-area');
+                        const citySelect = document.getElementById('nova-poshta-city');
+                        const warehouseSelect = document.getElementById('nova-poshta-warehouse');
+                        
+                        if (areaSelect && citySelect && warehouseSelect) {
+                            console.log('Initializing Nova Poshta form for customer');
+                            
+                            // Load areas
+                            this.loadAreas();
+                            
+                            // Add event listeners
+                            areaSelect.addEventListener('change', (e) => {
+                                this.onAreaChange(e.target.value);
+                            });
+                            
+                            citySelect.addEventListener('change', (e) => {
+                                this.onCityChange(e.target.value);
+                            });
+                            
+                            warehouseSelect.addEventListener('change', (e) => {
+                                this.onWarehouseChange(e.target.value);
+                            });
+                        }
+                    });
+                },
+
+                loadAreas() {
+                    this.showLoading('area-loading');
+                    
+                    fetch("{{ route('api.nova-poshta.areas') }}")
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Areas response:', data);
+                            if (data.success) {
+                                this.populateSelect('nova-poshta-area', data.data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading areas:', error);
+                        })
+                        .finally(() => {
+                            this.hideLoading('area-loading');
+                        });
+                },
+
+                onAreaChange(areaRef) {
+                    console.log('Area changed to:', areaRef);
+                    
+                    // Reset dependent selects
+                    this.resetDependentSelects('nova-poshta-city', 'Спочатку виберіть область');
+                    this.resetDependentSelects('nova-poshta-warehouse', 'Спочатку виберіть місто');
+                    
+                    if (areaRef) {
+                        this.loadCities(areaRef);
+                    }
+                },
+
+                loadCities(areaRef) {
+                    this.showLoading('city-loading');
+                    
+                    // Update city select placeholder
+                    const citySelect = document.getElementById('nova-poshta-city');
+                    citySelect.innerHTML = '<option value="">Завантаження міст...</option>';
+                    
+                    fetch(`{{ route('api.nova-poshta.cities') }}?area_ref=${areaRef}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Cities response:', data);
+                            if (data.success) {
+                                // Use requestAnimationFrame to ensure smooth DOM updates
+                                requestAnimationFrame(() => {
+                                    // Clear the loading text and populate with actual data
+                                    citySelect.innerHTML = '<option value="">Виберіть місто</option>';
+                                    this.populateSelect('nova-poshta-city', data.data);
+                                    citySelect.disabled = false;
+                                    citySelect.className = citySelect.className.replace('bg-gray-50 text-gray-500 cursor-not-allowed', 'bg-white text-gray-700 cursor-pointer');
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading cities:', error);
+                            citySelect.innerHTML = '<option value="">Помилка завантаження міст</option>';
+                        })
+                        .finally(() => {
+                            this.hideLoading('city-loading');
+                        });
+                },
+
+                onCityChange(cityRef) {
+                    console.log('City changed to:', cityRef);
+                    
+                    // Reset dependent select
+                    this.resetDependentSelects('nova-poshta-warehouse', 'Спочатку виберіть місто');
+                    
+                    if (cityRef) {
+                        this.loadWarehouses(cityRef);
+                    }
+                },
+
+                loadWarehouses(cityRef) {
+                    this.showLoading('warehouse-loading');
+                    
+                    // Update warehouse select placeholder
+                    const warehouseSelect = document.getElementById('nova-poshta-warehouse');
+                    warehouseSelect.innerHTML = '<option value="">Завантаження відділень...</option>';
+                    
+                    fetch(`{{ route('api.nova-poshta.warehouses') }}?city_ref=${cityRef}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Warehouses response:', data);
+                            if (data.success) {
+                                // Use requestAnimationFrame to ensure smooth DOM updates
+                                requestAnimationFrame(() => {
+                                    // Clear the loading text and populate with actual data
+                                    warehouseSelect.innerHTML = '<option value="">Виберіть відділення</option>';
+                                    this.populateSelect('nova-poshta-warehouse', data.data);
+                                    warehouseSelect.disabled = false;
+                                    warehouseSelect.className = warehouseSelect.className.replace('bg-gray-50 text-gray-500 cursor-not-allowed', 'bg-white text-gray-700 cursor-pointer');
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading warehouses:', error);
+                            warehouseSelect.innerHTML = '<option value="">Помилка завантаження відділень</option>';
+                        })
+                        .finally(() => {
+                            this.hideLoading('warehouse-loading');
+                        });
+                },
+
+                onWarehouseChange(warehouseRef) {
+                    console.log('Warehouse changed to:', warehouseRef);
+                },
+
+                populateSelect(selectId, data) {
+                    const select = document.getElementById(selectId);
+                    if (!select) return;
+                    
+                    // Store the first option (placeholder)
+                    const firstOption = select.children[0];
+                    
+                    // Clear all options
+                    select.innerHTML = '';
+                    
+                    // Add back the first option
+                    select.appendChild(firstOption);
+                    
+                    // Add new options immediately (no delay to prevent cursor issues)
+                    data.forEach((item) => {
+                        const option = document.createElement('option');
+                        option.value = item.ref;
+                        option.textContent = item.description_ru || item.description;
+                        option.className = 'nova-poshta-option';
+                        select.appendChild(option);
+                    });
+                    
+                    // Add success state briefly
+                    select.classList.add('success');
+                    setTimeout(() => {
+                        select.classList.remove('success');
+                    }, 800);
+                },
+
+                showLoading(loadingId) {
+                    const loadingElement = document.getElementById(loadingId);
+                    if (loadingElement) {
+                        loadingElement.classList.remove('hidden');
+                    }
+                },
+
+                hideLoading(loadingId) {
+                    const loadingElement = document.getElementById(loadingId);
+                    if (loadingElement) {
+                        loadingElement.classList.add('hidden');
+                    }
+                },
+
+                resetDependentSelects(selectId, placeholder) {
+                    const select = document.getElementById(selectId);
+                    if (select) {
+                        select.innerHTML = `<option value="">${placeholder}</option>`;
+                        select.value = '';
+                        select.disabled = true;
+                        select.className = select.className.replace('bg-white text-gray-700 cursor-pointer', 'bg-gray-50 text-gray-500 cursor-not-allowed');
+                        
+                        // Remove any state classes
+                        select.classList.remove('success', 'error');
+                    }
+                },
+
+                collectNovaPoshtaData(params) {
+                    console.log('Collecting Nova Poshta data for params:', params);
+                    
+                    // Collect billing address Nova Poshta data
+                    const billingAreaSelect = document.querySelector('select[name="billing.area"]');
+                    const billingCitySelect = document.querySelector('select[name="billing.city"]');
+                    const billingWarehouseSelect = document.querySelector('select[name="billing.warehouse"]');
+                    
+                    console.log('Found select elements:', {
+                        billingAreaSelect: billingAreaSelect,
+                        billingCitySelect: billingCitySelect,
+                        billingWarehouseSelect: billingWarehouseSelect
+                    });
+                    
+                    // If no select elements found, try to get data from the selected address
+                    if (!billingAreaSelect && !billingCitySelect && !billingWarehouseSelect) {
+                        console.log('No Nova Poshta select elements found, trying to get data from selected address');
+                        const selectedBillingAddress = this.customerSavedAddresses.billing.find(addr => 
+                            addr.id == params.billing?.id
+                        );
+                        
+                        if (selectedBillingAddress) {
+                            console.log('Found selected billing address:', selectedBillingAddress);
+                            if (selectedBillingAddress.area) {
+                                params.billing.area = selectedBillingAddress.area;
+                                params.billing.state = selectedBillingAddress.state;
+                            }
+                            if (selectedBillingAddress.city) {
+                                params.billing.city = selectedBillingAddress.city;
+                            }
+                            if (selectedBillingAddress.warehouse) {
+                                params.billing.warehouse = selectedBillingAddress.warehouse;
+                            }
+                        }
+                    }
+                    
+                    if (billingAreaSelect && billingAreaSelect.value) {
+                        params.billing.area = billingAreaSelect.selectedOptions[0]?.text || billingAreaSelect.value;
+                        params.billing.state = billingAreaSelect.selectedOptions[0]?.text || billingAreaSelect.value;
+                        console.log('Updated billing area:', params.billing.area);
+                    }
+                    
+                    if (billingCitySelect && billingCitySelect.value) {
+                        params.billing.city = billingCitySelect.selectedOptions[0]?.text || billingCitySelect.value;
+                        console.log('Updated billing city:', params.billing.city);
+                    }
+                    
+                    if (billingWarehouseSelect && billingWarehouseSelect.value) {
+                        params.billing.warehouse = billingWarehouseSelect.selectedOptions[0]?.text || billingWarehouseSelect.value;
+                        console.log('Updated billing warehouse:', params.billing.warehouse);
+                    }
+                    
+                    // Collect shipping address Nova Poshta data if not using billing for shipping
+                    if (!this.useBillingAddressForShipping && params.shipping) {
+                        const shippingAreaSelect = document.querySelector('select[name="shipping.area"]');
+                        const shippingCitySelect = document.querySelector('select[name="shipping.city"]');
+                        const shippingWarehouseSelect = document.querySelector('select[name="shipping.warehouse"]');
+                        
+                        // If no select elements found, try to get data from the selected address
+                        if (!shippingAreaSelect && !shippingCitySelect && !shippingWarehouseSelect) {
+                            console.log('No Nova Poshta select elements found for shipping, trying to get data from selected address');
+                            const selectedShippingAddress = this.customerSavedAddresses.shipping.find(addr => 
+                                addr.id == params.shipping?.id
+                            );
+                            
+                            if (selectedShippingAddress) {
+                                console.log('Found selected shipping address:', selectedShippingAddress);
+                                if (selectedShippingAddress.area) {
+                                    params.shipping.area = selectedShippingAddress.area;
+                                    params.shipping.state = selectedShippingAddress.state;
+                                }
+                                if (selectedShippingAddress.city) {
+                                    params.shipping.city = selectedShippingAddress.city;
+                                }
+                                if (selectedShippingAddress.warehouse) {
+                                    params.shipping.warehouse = selectedShippingAddress.warehouse;
+                                }
+                            }
+                        }
+                        
+                        if (shippingAreaSelect && shippingAreaSelect.value) {
+                            params.shipping.area = shippingAreaSelect.value;
+                            params.shipping.state = shippingAreaSelect.selectedOptions[0]?.text || shippingAreaSelect.value;
+                        }
+                        
+                        if (shippingCitySelect && shippingCitySelect.value) {
+                            params.shipping.city = shippingCitySelect.value;
+                        }
+                        
+                        if (shippingWarehouseSelect && shippingWarehouseSelect.value) {
+                            params.shipping.warehouse = shippingWarehouseSelect.value;
+                        }
+                    }
+                    
+                    console.log('Collected Nova Poshta data:', {
+                        billing: {
+                            area: params.billing.area,
+                            city: params.billing.city,
+                            warehouse: params.billing.warehouse,
+                            state: params.billing.state
+                        },
+                        shipping: params.shipping ? {
+                            area: params.shipping.area,
+                            city: params.shipping.city,
+                            warehouse: params.shipping.warehouse,
+                            state: params.shipping.state
+                        } : null
+                    });
+                }
             }
         });
     </script>

@@ -1,58 +1,115 @@
 @pushOnce('styles')
-    <style>
-        /* Nova Poshta Select Styles */
-        .nova-poshta-select {
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .nova-poshta-select:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .nova-poshta-select:focus {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-        }
-        
-        .nova-poshta-select:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        /* Loading animation */
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
-        
-        /* Success state */
-        .nova-poshta-select.success {
-            border-color: #10b981;
-            background-color: #f0fdf4;
-        }
-        
-        /* Error state */
-        .nova-poshta-select.error {
-            border-color: #ef4444;
-            background-color: #fef2f2;
-        }
-        
-        /* Subtle fade in animation for options */
-        .nova-poshta-option {
-            animation: fadeIn 0.2s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
-@endPushOnce
+        <style>
+            
+            .nova-poshta-select:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+            }
+
+            /* Keep dropdown open when hovering over it */
+            .vs__dropdown-menu {
+                z-index: 9999 !important;
+                position: absolute !important;
+                background: white !important;
+                border: 1px solid #e5e7eb !important;
+                border-radius: 8px !important;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+                max-height: 300px !important;
+                overflow-y: auto !important;
+                margin-top: 4px !important;
+            }
+
+            .vs__dropdown-menu:hover {
+                z-index: 9999 !important;
+            }
+
+            /* v-select control styles */
+            .vs__control {
+                min-height: 48px !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 8px !important;
+                background: white !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .vs__control:hover {
+                border-color: #9ca3af !important;
+            }
+
+            .vs__control--focused {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            }
+
+            .vs__control--disabled {
+                background-color: #f9fafb !important;
+                border-color: #e5e7eb !important;
+                color: #9ca3af !important;
+            }
+
+            /* v-select dropdown options */
+            .vs__dropdown-option {
+                padding: 12px 16px !important;
+                transition: all 0.2s ease !important;
+                border-bottom: 1px solid #f3f4f6 !important;
+            }
+
+            .vs__dropdown-option:last-child {
+                border-bottom: none !important;
+            }
+
+            .vs__dropdown-option:hover {
+                background-color: #f8fafc !important;
+                color: #1f2937 !important;
+            }
+
+            .vs__dropdown-option--highlight {
+                background-color: #3b82f6 !important;
+                color: white !important;
+            }
+
+            .vs__dropdown-option--selected {
+                background-color: #dbeafe !important;
+                color: #1e40af !important;
+                font-weight: 500 !important;
+            }
+
+            /* v-select search input */
+            .vs__search {
+                padding: 12px 16px !important;
+                font-size: 14px !important;
+                border: none !important;
+                outline: none !important;
+                background: transparent !important;
+            }
+
+            .vs__search::placeholder {
+                color: #9ca3af !important;
+            }
+
+            /* v-select clear button */
+            .vs__clear {
+                color: #9ca3af !important;
+                transition: color 0.2s ease !important;
+            }
+
+            .vs__clear:hover {
+                color: #6b7280 !important;
+            }
+
+            /* v-select open indicator */
+            .vs__open-indicator {
+                color: #9ca3af !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .vs__open-indicator:hover {
+                color: #6b7280 !important;
+            }
+
+        </style>
+    @endPushOnce
 
 @pushOnce('scripts')
     <script
@@ -64,7 +121,7 @@
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.id'"
-                    ::value="address.id"
+                    ::value="safeAddress.id"
                 />
             </x-shop::form.control-group>
 
@@ -79,7 +136,7 @@
                     <x-shop::form.control-group.control
                         type="text"
                         ::name="controlName + '.first_name'"
-                        ::value="address.first_name"
+                        ::value="safeAddress.first_name"
                         rules="required"
                         :label="trans('shop::app.checkout.onepage.address.first-name')"
                         :placeholder="trans('shop::app.checkout.onepage.address.first-name')"
@@ -99,7 +156,7 @@
                     <x-shop::form.control-group.control
                         type="text"
                         ::name="controlName + '.last_name'"
-                        ::value="address.last_name"
+                        ::value="safeAddress.last_name"
                         rules="required"
                         :label="trans('shop::app.checkout.onepage.address.last-name')"
                         :placeholder="trans('shop::app.checkout.onepage.address.last-name')"
@@ -120,7 +177,7 @@
                 <x-shop::form.control-group.control
                     type="email"
                     ::name="controlName + '.email'"
-                    ::value="address.email"
+                    ::value="safeAddress.email"
                     rules="required|email"
                     :label="trans('shop::app.checkout.onepage.address.email')"
                     placeholder="email@example.com"
@@ -138,32 +195,18 @@
                     Область
                 </x-shop::form.control-group.label>
 
-                <div class="relative">
-                    <select 
-                        :name="controlName + '.area'"
-                        id="nova-poshta-area"
-                        rules="required"
-                        :label="'Область'"
-                        class="nova-poshta-select flex w-full min-h-[48px] py-3 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none appearance-none cursor-pointer shadow-sm"
-                    >
-                        <option value="">Виберіть область</option>
-                    </select>
-                    
-                    <!-- Custom dropdown arrow -->
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                    
-                    <!-- Loading indicator for area -->
-                    <div id="area-loading" class="absolute inset-y-0 right-8 flex items-center hidden">
-                        <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                </div>
+                <v-select
+                    v-model="selectedArea"
+                    :options="areaOptions"
+                    :loading="areaLoading"
+                    placeholder="Виберіть область"
+                    searchable
+                    clearable
+                    close-on-select="false"
+                    @input="onAreaChange"
+                    @update:modelValue="onAreaChange"
+                    class="nova-poshta-select"
+                />
 
                 <x-shop::form.control-group.error ::name="controlName + '.area'" />
             </x-shop::form.control-group>
@@ -174,33 +217,19 @@
                     Місто
                 </x-shop::form.control-group.label>
 
-                <div class="relative">
-                    <select 
-                        :name="controlName + '.city'"
-                        id="nova-poshta-city"
-                        disabled
-                        rules="required"
-                        :label="'Місто'"
-                        class="nova-poshta-select flex w-full min-h-[48px] py-3 px-4 border border-gray-300 rounded-lg text-sm text-gray-500 bg-gray-50 transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none appearance-none cursor-not-allowed shadow-sm disabled:opacity-60"
-                    >
-                        <option value="">Спочатку виберіть область</option>
-                    </select>
-                    
-                    <!-- Custom dropdown arrow -->
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                    
-                    <!-- Loading indicator for city -->
-                    <div id="city-loading" class="absolute inset-y-0 right-8 flex items-center hidden">
-                        <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                </div>
+                <v-select
+                    v-model="selectedCity"
+                    :options="cityOptions"
+                    :loading="cityLoading"
+                    :disabled="!selectedArea"
+                    placeholder="Спочатку виберіть область"
+                    searchable
+                    clearable
+                    close-on-select="false"
+                    @input="onCityChange"
+                    @update:modelValue="onCityChange"
+                    class="nova-poshta-select"
+                />
 
                 <x-shop::form.control-group.error ::name="controlName + '.city'" />
             </x-shop::form.control-group>
@@ -211,33 +240,19 @@
                     Відділення Нової Пошти
                 </x-shop::form.control-group.label>
 
-                <div class="relative">
-                    <select 
-                        :name="controlName + '.warehouse'"
-                        id="nova-poshta-warehouse"
-                        disabled
-                        rules="required"
-                        :label="'Відділення Нової Пошти'"
-                        class="nova-poshta-select flex w-full min-h-[48px] py-3 px-4 border border-gray-300 rounded-lg text-sm text-gray-500 bg-gray-50 transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none appearance-none cursor-not-allowed shadow-sm disabled:opacity-60"
-                    >
-                        <option value="">Спочатку виберіть місто</option>
-                    </select>
-                    
-                    <!-- Custom dropdown arrow -->
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                    
-                    <!-- Loading indicator for warehouse -->
-                    <div id="warehouse-loading" class="absolute inset-y-0 right-8 flex items-center hidden">
-                        <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                </div>
+                <v-select
+                    v-model="selectedWarehouse"
+                    :options="warehouseOptions"
+                    :loading="warehouseLoading"
+                    :disabled="!selectedCity"
+                    placeholder="Спочатку виберіть місто"
+                    searchable
+                    clearable
+                    close-on-select="false"
+                    @input="onWarehouseChange"
+                    @update:modelValue="onWarehouseChange"
+                    class="nova-poshta-select"
+                />
 
                 <x-shop::form.control-group.error ::name="controlName + '.warehouse'" />
             </x-shop::form.control-group>
@@ -248,7 +263,7 @@
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.address.[0]'"
-                    ::value="address.address[0]"
+                    ::value="safeAddress.address[0]"
                 />
             </x-shop::form.control-group>
 
@@ -264,22 +279,26 @@
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.state'"
-                    v-model="address.state"
+                    ::value="area"
+                    v-model="area"
                 />
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.city'"
-                    v-model="address.city"
+                    ::value="city"
+                    v-model="city"
                 />
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.area'"
-                    v-model="address.area"
+                    ::value="area"
+                    v-model="area"
                 />
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.warehouse'"
-                    v-model="address.warehouse"
+                    ::value="warehouse"
+                    v-model="warehouse"
                 />
             </x-shop::form.control-group>
 
@@ -292,7 +311,7 @@
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.postcode'"
-                    ::value="address.postcode"
+                    ::value="safeAddress.postcode"
                     rules="postcode"
                     :label="trans('shop::app.checkout.onepage.address.postcode')"
                     :placeholder="trans('shop::app.checkout.onepage.address.postcode')"
@@ -312,7 +331,7 @@
                 <x-shop::form.control-group.control
                     type="text"
                     ::name="controlName + '.phone'"
-                    ::value="address.phone"
+                    ::value="safeAddress.phone"
                     rules="required|phone"
                     :label="trans('shop::app.checkout.onepage.address.telephone')"
                     :placeholder="trans('shop::app.checkout.onepage.address.telephone')"
@@ -347,7 +366,7 @@
                         address: [],
                         country: 'UA',
                         state: '',
-                        area: '',
+                        area: 'test',
                         city: '',
                         warehouse: '',
                         postcode: '',
@@ -355,191 +374,58 @@
                     }),
                 },
             },
+
+            computed: {
+                safeAddress() {
+                    return this.address || {
+                        id: 0,
+                        company_name: '',
+                        first_name: '',
+                        last_name: '',
+                        email: '',
+                        address: [],
+                        country: 'UA',
+                        state: '',
+                        area: '',
+                        city: '',
+                        warehouse: '',
+                        postcode: '',
+                        phone: '',
+                    };
+                }
+            },
+
+            data() {
+                return {
+                    selectedArea: null,
+                    selectedCity: null,
+                    selectedWarehouse: null,
+                    areaOptions: [],
+                    cityOptions: [],
+                    warehouseOptions: [],
+                    areaLoading: false,
+                    cityLoading: false,
+                    warehouseLoading: false,
+                    selectedAreaLabel: '',
+                    selectedCityLabel: '',
+                    selectedWarehouseLabel: '',
+                    area: '',
+                    city: '',
+                    warehouse: '',
+                }
+            },
+
             mounted() {
                 // Initialize Nova Poshta form
                 this.initNovaPoshtaForm();
+                this.fixDropdownZIndex();
             },
 
             methods: {
                 initNovaPoshtaForm() {
-                    // Wait for DOM to be ready
-                    this.$nextTick(() => {
-                        const areaSelect = document.getElementById('nova-poshta-area');
-                        const citySelect = document.getElementById('nova-poshta-city');
-                        const warehouseSelect = document.getElementById('nova-poshta-warehouse');
-                        
-                        if (areaSelect && citySelect && warehouseSelect) {
-                            // Initialize hidden fields
-                            this.updateHiddenField('area', '');
-                            this.updateHiddenField('city', '');
-                            this.updateHiddenField('warehouse', '');
-                            
-                            // Load areas
-                            this.loadAreas();
-                            
-                            // Add event listeners
-                            areaSelect.addEventListener('change', (e) => {
-                                this.address.state = document.querySelector(`select[name="${e.target.name}"]`).selectedOptions[0].label;
-                                this.address.area = document.querySelector(`select[name="${e.target.name}"]`).selectedOptions[0].label;
-                                this.onAreaChange(e.target.value);
-                                this.ensureNovaPoshtaFields();
-                            });
-                            
-                            citySelect.addEventListener('change', (e) => {
-                                this.address.city = document.querySelector(`select[name="${e.target.name}"]`).selectedOptions[0].label;
-                                this.onCityChange(e.target.value);
-                                this.ensureNovaPoshtaFields();
-                            });
-                            
-                            warehouseSelect.addEventListener('change', (e) => {
-                                this.address.warehouse = document.querySelector(`select[name="${e.target.name}"]`).selectedOptions[0].label;
-                                this.onWarehouseChange(e.target.value);
-                                this.ensureNovaPoshtaFields();
-                            });
-                        }
-                    });
+                    this.loadAreas();
                 },
 
-                loadAreas() {
-                    this.showLoading('area-loading');
-                    
-                    fetch("{{ route('api.nova-poshta.areas') }}")
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Areas response:', data);
-                            if (data.success) {
-                                this.populateSelect('nova-poshta-area', data.data);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error loading areas:', error);
-                        })
-                        .finally(() => {
-                            this.hideLoading('area-loading');
-                        });
-                },
-
-                onAreaChange(areaRef) {
-                    console.log('Area changed to:', areaRef);
-                    
-                    // Update hidden field with multiple approaches
-                    this.updateHiddenField('area', areaRef);
-                    
-                    // Also directly update any existing hidden field
-                    const hiddenAreaField = document.querySelector(`input[name*="area"]`);
-                    if (hiddenAreaField) {
-                        hiddenAreaField.value = areaRef;
-                        console.log('Directly updated area field:', hiddenAreaField.name, '=', areaRef);
-                    }
-                    
-                    // Reset dependent selects
-                    this.resetDependentSelects('nova-poshta-city', 'Спочатку виберіть область');
-                    this.resetDependentSelects('nova-poshta-warehouse', 'Спочатку виберіть місто');
-                    
-                    if (areaRef) {
-                        this.loadCities(areaRef);
-                    }
-                },
-
-                loadCities(areaRef) {
-                    this.showLoading('city-loading');
-                    
-                    // Update city select placeholder
-                    const citySelect = document.getElementById('nova-poshta-city');
-                    citySelect.innerHTML = '<option value="">Завантаження міст...</option>';
-                    
-                    fetch(`{{ route('api.nova-poshta.cities') }}?area_ref=${areaRef}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Cities response:', data);
-                            if (data.success) {
-                                // Use requestAnimationFrame to ensure smooth DOM updates
-                                requestAnimationFrame(() => {
-                                    // Clear the loading text and populate with actual data
-                                    citySelect.innerHTML = '<option value="">Виберіть місто</option>';
-                                    this.populateSelect('nova-poshta-city', data.data);
-                                    citySelect.disabled = false;
-                                    citySelect.className = citySelect.className.replace('bg-gray-50 text-gray-500 cursor-not-allowed', 'bg-white text-gray-700 cursor-pointer');
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error loading cities:', error);
-                            citySelect.innerHTML = '<option value="">Помилка завантаження міст</option>';
-                        })
-                        .finally(() => {
-                            this.hideLoading('city-loading');
-                        });
-                },
-
-                onCityChange(cityRef) {
-                    console.log('City changed to:', cityRef);
-                    
-                    // Update hidden field with multiple approaches
-                    this.updateHiddenField('city', cityRef);
-                    
-                    // Also directly update any existing hidden field
-                    const hiddenCityField = document.querySelector(`input[name*="city"]`);
-                    if (hiddenCityField) {
-                        hiddenCityField.value = cityRef;
-                        console.log('Directly updated city field:', hiddenCityField.name, '=', cityRef);
-                    }
-                    
-                    // Reset dependent select
-                    this.resetDependentSelects('nova-poshta-warehouse', 'Спочатку виберіть місто');
-                    
-                    if (cityRef) {
-                        this.loadWarehouses(cityRef);
-                    }
-                },
-
-                loadWarehouses(cityRef) {
-                    this.showLoading('warehouse-loading');
-                    
-                    // Update warehouse select placeholder
-                    const warehouseSelect = document.getElementById('nova-poshta-warehouse');
-                    warehouseSelect.innerHTML = '<option value="">Завантаження відділень...</option>';
-                    
-                    fetch(`{{ route('api.nova-poshta.warehouses') }}?city_ref=${cityRef}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Warehouses response:', data);
-                            if (data.success) {
-                                // Use requestAnimationFrame to ensure smooth DOM updates
-                                requestAnimationFrame(() => {
-                                    // Clear the loading text and populate with actual data
-                                    warehouseSelect.innerHTML = '<option value="">Виберіть відділення</option>';
-                                    this.populateSelect('nova-poshta-warehouse', data.data);
-                                    warehouseSelect.disabled = false;
-                                    warehouseSelect.className = warehouseSelect.className.replace('bg-gray-50 text-gray-500 cursor-not-allowed', 'bg-white text-gray-700 cursor-pointer');
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error loading warehouses:', error);
-                            warehouseSelect.innerHTML = '<option value="">Помилка завантаження відділень</option>';
-                        })
-                        .finally(() => {
-                            this.hideLoading('warehouse-loading');
-                        });
-                },
-
-                onWarehouseChange(warehouseRef) {
-                    console.log('Warehouse changed to:', warehouseRef);
-                    
-                    // Update Vue data
-                    this.address.warehouse = warehouseRef;
-                    
-                    // Update hidden field with multiple approaches
-                    this.updateHiddenField('warehouse', warehouseRef);
-                    
-                    // Also directly update any existing hidden field
-                    const hiddenWarehouseField = document.querySelector(`input[name*="warehouse"]`);
-                    if (hiddenWarehouseField) {
-                        hiddenWarehouseField.value = warehouseRef;
-                        console.log('Directly updated warehouse field:', hiddenWarehouseField.name, '=', warehouseRef);
-                    }
-                },
 
                 populateSelect(selectId, data) {
                     const select = document.getElementById(selectId);
@@ -645,26 +531,26 @@
                     // Force update all fields
                     if (areaSelect) {
                         const areaValue = areaSelect.value || '';
-                        this.address.area = areaValue;
+                        this.safeAddress.area = areaValue;
                         this.updateHiddenField('area', areaValue);
                     }
                     
                     if (citySelect) {
                         const cityValue = citySelect.value || '';
-                        this.address.city = cityValue;
+                        this.safeAddress.city = cityValue;
                         this.updateHiddenField('city', cityValue);
                     }
                     
                     if (warehouseSelect) {
                         const warehouseValue = warehouseSelect.value || '';
-                        this.address.warehouse = warehouseValue;
+                        this.safeAddress.warehouse = warehouseValue;
                         this.updateHiddenField('warehouse', warehouseValue);
                     }
                     
                     console.log('Force updated Nova Poshta fields:', {
-                        area: this.address.area,
-                        city: this.address.city,
-                        warehouse: this.address.warehouse
+                        area: this.safeAddress.area,
+                        city: this.safeAddress.city,
+                        warehouse: this.safeAddress.warehouse
                     });
                 },
 
@@ -697,18 +583,18 @@
                     
                     if (areaSelect && areaSelect.value) {
                         this.updateHiddenField('area', areaSelect.value);
-                        this.address.area = areaSelect.value;
-                        this.address.state = areaSelect.selectedOptions[0]?.text || areaSelect.value;
+                        this.safeAddress.area = areaSelect.value;
+                        this.safeAddress.state = areaSelect.selectedOptions[0]?.text || areaSelect.value;
                     }
                     
                     if (citySelect && citySelect.value) {
                         this.updateHiddenField('city', citySelect.value);
-                        this.address.city = citySelect.value;
+                        this.safeAddress.city = citySelect.value;
                     }
                     
                     if (warehouseSelect && warehouseSelect.value) {
                         this.updateHiddenField('warehouse', warehouseSelect.value);
-                        this.address.warehouse = warehouseSelect.value;
+                        this.safeAddress.warehouse = warehouseSelect.value;
                     }
                 },
 
@@ -740,6 +626,158 @@
                         // Remove any state classes
                         select.classList.remove('success', 'error');
                     }
+                },
+
+                // Nova Poshta methods
+                loadAreas() {
+                    this.areaLoading = true;
+                    
+                    fetch("{{ route('api.nova-poshta.areas') }}")
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Areas response:', data);
+                            if (data.success) {
+                                this.areaOptions = data.data.map(area => ({
+                                    value: area.ref,
+                                    label: area.description_ru || area.description
+                                }));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading areas:', error);
+                        })
+                        .finally(() => {
+                            this.areaLoading = false;
+                        });
+                },
+
+                onAreaChange(option) {
+                    console.log('Area changed to:', option.label);
+                    this.selectedCity = null;
+                    this.selectedWarehouse = null;
+                    this.cityOptions = [];
+                    this.warehouseOptions = [];
+                    if (option.value) {
+                        console.log('Loading cities for area:', option.value);
+                        this.loadCities(option.value);
+                        this.safeAddress.area = option.label;
+                        this.safeAddress.state = option.label;
+                        this.area = option.label;
+                        this.state = option.label;
+                    } else {
+                        console.log('No area selected, not loading cities');
+                    }
+                },
+
+                loadCities(areaRef) {
+                    this.cityLoading = true;
+                    
+                    fetch(`{{ route('api.nova-poshta.cities') }}?area_ref=${areaRef}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Cities response:', data);
+                            if (data.success) {
+                                this.cityOptions = data.data.map(city => ({
+                                    value: city.ref,
+                                    label: city.description_ru || city.description
+                                }));
+                                console.log('City options set:', this.cityOptions);
+                            } else {
+                                console.error('API returned success: false', data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading cities:', error);
+                        })
+                        .finally(() => {
+                            this.cityLoading = false;
+                            console.log('City loading finished');
+                        });
+                },
+
+                onCityChange(option) {
+                    console.log('City changed to:', option.label);
+                    
+                    // Reset dependent select
+                    this.selectedWarehouse = null;
+                    this.warehouseOptions = [];
+                    
+                    if (option.value) {
+                        this.loadWarehouses(option.value);
+                        this.safeAddress.city = option.label;
+                        this.city = option.label;
+                    }
+                },
+
+                loadWarehouses(cityRef) {
+                    this.warehouseLoading = true;
+                    
+                    fetch(`{{ route('api.nova-poshta.warehouses') }}?city_ref=${cityRef}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Warehouses response:', data);
+                            if (data.success) {
+                                this.warehouseOptions = data.data.map(warehouse => ({
+                                    value: warehouse.ref,
+                                    label: warehouse.description_ru || warehouse.description
+                                }));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading warehouses:', error);
+                        })
+                        .finally(() => {
+                            this.warehouseLoading = false;
+                        });
+                },
+
+                onWarehouseChange(option) {
+                    console.log('Warehouse changed to:', option.label);
+                    
+                    // Update Vue data
+                    this.safeAddress.warehouse = option.label;
+                    
+                    // Update hidden field  
+                    this.warehouse = option.label;
+                },
+
+                fixDropdownZIndex() {
+                    this.$nextTick(() => {
+                        const observer = new MutationObserver((mutations) => {
+                            mutations.forEach((mutation) => {
+                                if (mutation.type === 'childList') {
+                                    const dropdowns = document.querySelectorAll('.vs__dropdown-menu');
+                                    dropdowns.forEach((dropdown) => {
+                                        dropdown.style.zIndex = '9999';
+                                        dropdown.style.position = 'absolute';
+                                        dropdown.addEventListener('mouseenter', (e) => {
+                                            e.stopPropagation();
+                                        });
+                                        dropdown.addEventListener('mouseleave', (e) => {
+                                            e.stopPropagation();
+                                        });
+                                    });
+                                }
+                            });
+                        });
+                        observer.observe(document.body, {
+                            childList: true,
+                            subtree: true
+                        });
+                        setTimeout(() => {
+                            const dropdowns = document.querySelectorAll('.vs__dropdown-menu');
+                            dropdowns.forEach((dropdown) => {
+                                dropdown.style.zIndex = '9999';
+                                dropdown.style.position = 'absolute';
+                                dropdown.addEventListener('mouseenter', (e) => {
+                                    e.stopPropagation();
+                                });
+                                dropdown.addEventListener('mouseleave', (e) => {
+                                    e.stopPropagation();
+                                });
+                            });
+                        }, 100);
+                    });
                 }
             }
         });

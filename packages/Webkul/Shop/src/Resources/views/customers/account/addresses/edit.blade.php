@@ -46,6 +46,62 @@
         {!! view_render_event('bagisto.shop.customers.account.address.edit.after', ['address' => $address]) !!}
     </div>
 
+    @pushOnce('styles')
+        <style>
+            /* Nova Poshta Select Styles */
+            .nova-poshta-select {
+                transition: all 0.2s ease-in-out;
+            }
+            
+            .nova-poshta-select:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nova-poshta-select:focus {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            }
+            
+            .nova-poshta-select:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+            
+            /* Loading animation */
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            .animate-spin {
+                animation: spin 1s linear infinite;
+            }
+            
+            /* Success state */
+            .nova-poshta-select.success {
+                border-color: #10b981;
+                background-color: #f0fdf4;
+            }
+            
+            /* Error state */
+            .nova-poshta-select.error {
+                border-color: #ef4444;
+                background-color: #fef2f2;
+            }
+            
+            /* Subtle fade in animation for options */
+            .nova-poshta-option {
+                animation: fadeIn 0.2s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        </style>
+    @endPushOnce
+
     @push('scripts')
         <script
             type="text/x-template"
@@ -136,6 +192,103 @@
                 </x-shop::form.control-group>
 
                 {!! view_render_event('bagisto.shop.customers.account.addresses.edit_form_controls.email.after', ['address' => $address]) !!}
+
+                <!-- Nova Poshta Area Selection -->
+                <x-shop::form.control-group>
+                    <x-shop::form.control-group.label class="required !mt-0">
+                        Область
+                    </x-shop::form.control-group.label>
+
+                    <v-select
+                        v-model="selectedArea"
+                        :options="areaOptions"
+                        :loading="areaLoading"
+                        placeholder="Виберіть область"
+                        searchable
+                        clearable
+                        close-on-select="false"
+                        @input="onAreaChange"
+                        @update:modelValue="onAreaChange"
+                        class="nova-poshta-select"
+                    />
+
+                    <x-shop::form.control-group.error control-name="area" />
+                </x-shop::form.control-group>
+
+                <!-- Nova Poshta City Selection -->
+                <x-shop::form.control-group>
+                    <x-shop::form.control-group.label class="required !mt-0">
+                        Місто
+                    </x-shop::form.control-group.label>
+
+                    <v-select
+                        v-model="selectedCity"
+                        :options="cityOptions"
+                        :loading="cityLoading"
+                        :disabled="!selectedArea"
+                        placeholder="Спочатку виберіть область"
+                        searchable
+                        clearable
+                        close-on-select="false"
+                        @input="onCityChange"
+                        @update:modelValue="onCityChange"
+                        class="nova-poshta-select"
+                    />
+
+                    <x-shop::form.control-group.error control-name="city" />
+                </x-shop::form.control-group>
+
+                <!-- Nova Poshta Warehouse Selection -->
+                <x-shop::form.control-group>
+                    <x-shop::form.control-group.label class="required !mt-0">
+                        Відділення Нової Пошти
+                    </x-shop::form.control-group.label>
+
+                    <v-select
+                        v-model="selectedWarehouse"
+                        :options="warehouseOptions"
+                        :loading="warehouseLoading"
+                        :disabled="!selectedCity"
+                        placeholder="Спочатку виберіть місто"
+                        searchable
+                        clearable
+                        close-on-select="false"
+                        @input="onWarehouseChange"
+                        @update:modelValue="onWarehouseChange"
+                        class="nova-poshta-select"
+                    />
+
+                    <x-shop::form.control-group.error control-name="warehouse" />
+                </x-shop::form.control-group>
+
+                <!-- Hidden fields for Ukraine -->
+                <x-shop::form.control-group class="hidden">
+                    <x-shop::form.control-group.control
+                        type="text"
+                        name="country"
+                        value="UA"
+                    />
+                    <x-shop::form.control-group.control
+                        type="text"
+                        name="state"
+                        v-model="selectedAreaLabel"
+                    />
+                    <x-shop::form.control-group.control
+                        type="text"
+                        name="area"
+                        v-model="selectedAreaLabel"
+                    />
+                    <x-shop::form.control-group.control
+                        type="text"
+                        name="city"
+                        v-model="selectedCityLabel"
+                    />
+                    <x-shop::form.control-group.control
+                        type="text"
+                        name="warehouse"
+                        v-model="selectedWarehouseLabel"
+                    />
+                </x-shop::form.control-group>
 
                 <!-- Vat ID -->
                 <x-shop::form.control-group>
@@ -347,18 +500,163 @@
                     return {
                         addressData: {
                             country: "{{ old('country') ?? $address->country }}",
-
                             state: "{{ old('state') ?? $address->state }}",
                         },
-
-                        countryStates: @json(core()->groupedStatesByCountries()),
+                        countryStates: {!! json_encode(core()->groupedStatesByCountries()) !!},
+                        
+                        // Nova Poshta data
+                        selectedArea: null,
+                        selectedCity: null,
+                        selectedWarehouse: null,
+                        areaOptions: [],
+                        cityOptions: [],
+                        warehouseOptions: [],
+                        areaLoading: false,
+                        cityLoading: false,
+                        warehouseLoading: false,
+                        selectedAreaLabel: '',
+                        selectedCityLabel: '',
+                        selectedWarehouseLabel: '',
                     };
+                },
+
+                mounted() {
+                    // Initialize Nova Poshta form
+                    this.initNovaPoshtaForm();
                 },
     
                 methods: {
                     haveStates() {
                         return !!this.countryStates[this.addressData.country]?.length;
                     },
+
+                    initNovaPoshtaForm() {
+                        console.log('Initializing Nova Poshta form for customer address editing');
+                        // Load areas
+                        this.loadAreas();
+                    },
+
+                    loadAreas() {
+                        this.areaLoading = true;
+                        
+                        fetch("{{ route('api.nova-poshta.areas') }}")
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Areas response:', data);
+                                if (data.success) {
+                                    this.areaOptions = data.data.map(area => ({
+                                        value: area.ref,
+                                        label: area.description_ru || area.description
+                                    }));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading areas:', error);
+                            })
+                            .finally(() => {
+                                this.areaLoading = false;
+                            });
+                    },
+
+                    onAreaChange(option) {
+                        console.log('Area changed to:', option.label);
+                        console.log('AreaRef type:', typeof option.value);
+                        console.log('AreaRef value:', option.value);
+                        
+                        // Reset dependent selects
+                        this.selectedCity = null;
+                        this.selectedWarehouse = null;
+                        this.cityOptions = [];
+                        this.warehouseOptions = [];
+                        
+                        if (option.value) {
+                            console.log('Loading cities for area:', option.value);
+                            this.loadCities(option.value);
+                            document.querySelector('input[name="area"]').setAttribute('value', option.label);
+                            document.querySelector('input[name="state"]').setAttribute('value', option.label);
+                            this.selectedAreaLabel = option.label;
+                        } else {
+                            console.log('No area selected, not loading cities');
+                        }
+                    },
+
+                    loadCities(areaRef) {
+                        console.log('loadCities called with areaRef:', areaRef);
+                        this.cityLoading = true;
+                        
+                        const url = `{{ route('api.nova-poshta.cities') }}?area_ref=${areaRef}`;
+                        console.log('Fetching cities from URL:', url);
+                        
+                        fetch(url)
+                            .then(response => {
+                                console.log('Cities response status:', response.status);
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Cities response data:', data);
+                                if (data.success) {
+                                    this.cityOptions = data.data.map(city => ({
+                                        value: city.ref,
+                                        label: city.description_ru || city.description
+                                    }));
+                                    console.log('City options set:', this.cityOptions);
+                                } else {
+                                    console.error('API returned success: false', data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading cities:', error);
+                            })
+                            .finally(() => {
+                                this.cityLoading = false;
+                                console.log('City loading finished');
+                            });
+                    },
+
+                    onCityChange(option) {
+                        console.log('City changed to:', option.label);
+                        
+                        // Reset dependent select
+                        this.selectedWarehouse = null;
+                        this.warehouseOptions = [];
+                        
+                        if (option.value) {
+                            this.loadWarehouses(option.value);
+                            document.querySelector('input[name="city"]').setAttribute('value', option.label);
+                            this.selectedCityLabel = option.label;
+                        }
+                    },
+
+                    loadWarehouses(cityRef) {
+                        this.warehouseLoading = true;
+                        
+                        fetch(`{{ route('api.nova-poshta.warehouses') }}?city_ref=${cityRef}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Warehouses response:', data);
+                                if (data.success) {
+                                    this.warehouseOptions = data.data.map(warehouse => ({
+                                        value: warehouse.ref,
+                                        label: warehouse.description_ru || warehouse.description
+                                    }));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading warehouses:', error);
+                            })
+                            .finally(() => {
+                                this.warehouseLoading = false;
+                            });
+                    },
+
+                    onWarehouseChange(option) {
+                        console.log('Warehouse changed to:', option.label);
+                        console.log('Warehouse value:', document.querySelector('input[name="warehouse"]').value);
+                        document.querySelector('input[name="warehouse"]').setAttribute('value', option.label);
+                        console.log('Warehouse value:', document.querySelector('input[name="warehouse"]').value);
+                        this.selectedWarehouseLabel = option.label;
+                    },
+
                 },
             });
         </script>

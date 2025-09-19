@@ -45,13 +45,14 @@ class ReviewController extends APIController
             ->where('status', self::STATUS_APPROVED)
             ->paginate(8);
 
-        if (core()->getConfigData('catalog.products.review.censoring_reviewer_name')) {
-            $product->getCollection()->transform(function ($review) {
-                $review->name = $this->censorReviewerName($review->name);
+        // Disabled name censoring to show proper names
+        // if (core()->getConfigData('catalog.products.review.censoring_reviewer_name')) {
+        //     $product->getCollection()->transform(function ($review) {
+        //         $review->name = $this->censorReviewerName($review->name);
 
-                return $review;
-            });
-        }
+        //         return $review;
+        //     });
+        // }
 
         return ProductReviewResource::collection($product);
     }

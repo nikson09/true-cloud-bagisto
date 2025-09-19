@@ -137,6 +137,73 @@
                             <x-admin::form.control-group.error control-name="email" />
                         </x-admin::form.control-group>
 
+                        <!-- Nova Poshta Area Selection -->
+                        <x-admin::form.control-group class="w-full">
+                            <x-admin::form.control-group.label class="required">
+                                Область
+                            </x-admin::form.control-group.label>
+
+                            <select 
+                                name="area"
+                                id="nova-poshta-area-admin-create"
+                                class="flex w-full min-h-[39px] py-2 px-3 border border-gray-300 rounded-md text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:ring-gray-100"
+                            >
+                                <option value="">Виберіть область</option>
+                            </select>
+
+                            <x-admin::form.control-group.error control-name="area" />
+                        </x-admin::form.control-group>
+
+                        <!-- Nova Poshta City Selection -->
+                        <x-admin::form.control-group class="w-full">
+                            <x-admin::form.control-group.label class="required">
+                                Місто
+                            </x-admin::form.control-group.label>
+
+                            <select 
+                                name="city"
+                                id="nova-poshta-city-admin-create"
+                                disabled
+                                class="flex w-full min-h-[39px] py-2 px-3 border border-gray-300 rounded-md text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:ring-gray-100"
+                            >
+                                <option value="">Виберіть місто</option>
+                            </select>
+
+                            <x-admin::form.control-group.error control-name="city" />
+                        </x-admin::form.control-group>
+
+                        <!-- Nova Poshta Warehouse Selection -->
+                        <x-admin::form.control-group class="w-full">
+                            <x-admin::form.control-group.label class="required">
+                                Відділення Нової Пошти
+                            </x-admin::form.control-group.label>
+
+                            <select 
+                                name="warehouse"
+                                id="nova-poshta-warehouse-admin-create"
+                                disabled
+                                class="flex w-full min-h-[39px] py-2 px-3 border border-gray-300 rounded-md text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:ring-gray-100"
+                            >
+                                <option value="">Виберіть відділення</option>
+                            </select>
+
+                            <x-admin::form.control-group.error control-name="warehouse" />
+                        </x-admin::form.control-group>
+
+                        <!-- Hidden fields for Ukraine -->
+                        <x-admin::form.control-group class="hidden">
+                            <x-admin::form.control-group.control
+                                type="text"
+                                name="country"
+                                value="UA"
+                            />
+                            <x-admin::form.control-group.control
+                                type="text"
+                                name="state"
+                                v-model="state"
+                            />
+                        </x-admin::form.control-group>
+
                         <!--Phone number -->
                         <x-admin::form.control-group class="w-full">
                             <x-admin::form.control-group.label class="required">
@@ -338,13 +405,15 @@
             data() {
                 return {
                     country: "",
-
                     state: "",
-
-                    countryStates: @json(core()->groupedStatesByCountries()),
-
+                    countryStates: {!! json_encode(core()->groupedStatesByCountries()) !!},
                     isLoading: false,
                 };
+            },
+
+            mounted() {
+                // Initialize Nova Poshta form for admin create
+                this.initNovaPoshtaForm();
             },
 
             methods: {
@@ -381,6 +450,136 @@
                     * true if the array has a length greater than 0, and otherwise false.
                     */
                     return !!this.countryStates[this.country]?.length;
+                },
+
+                initNovaPoshtaForm() {
+                    // Wait for DOM to be ready
+                    this.$nextTick(() => {
+                        const areaSelect = document.getElementById('nova-poshta-area-admin-create');
+                        const citySelect = document.getElementById('nova-poshta-city-admin-create');
+                        const warehouseSelect = document.getElementById('nova-poshta-warehouse-admin-create');
+                        
+                        if (areaSelect && citySelect && warehouseSelect) {
+                            // Load areas
+                            this.loadAreas();
+                            
+                            // Add event listeners
+                            areaSelect.addEventListener('change', (e) => {
+                                this.onAreaChange(e.target.value);
+                            });
+                            
+                            citySelect.addEventListener('change', (e) => {
+                                this.onCityChange(e.target.value);
+                            });
+                            
+                            warehouseSelect.addEventListener('change', (e) => {
+                                this.onWarehouseChange(e.target.value);
+                            });
+                        }
+                    });
+                },
+
+                loadAreas() {
+                    fetch("{{ route('api.nova-poshta.areas') }}")
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Areas response:', data);
+                            if (data.success) {
+                                this.populateSelect('nova-poshta-area-admin-create', data.data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading areas:', error);
+                        });
+                },
+
+                onAreaChange(areaRef) {
+                    console.log('Area changed to:', areaRef);
+                    
+                    // Clear city and warehouse
+                    this.clearSelect('nova-poshta-city-admin-create');
+                    this.clearSelect('nova-poshta-warehouse-admin-create');
+                    document.getElementById('nova-poshta-city-admin-create').disabled = true;
+                    document.getElementById('nova-poshta-warehouse-admin-create').disabled = true;
+                    
+                    if (areaRef) {
+                        this.loadCities(areaRef);
+                    }
+                },
+
+                loadCities(areaRef) {
+                    fetch(`{{ route('api.nova-poshta.cities') }}?area_ref=${areaRef}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Cities response:', data);
+                            if (data.success) {
+                                this.populateSelect('nova-poshta-city-admin-create', data.data);
+                                document.getElementById('nova-poshta-city-admin-create').disabled = false;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading cities:', error);
+                        });
+                },
+
+                onCityChange(cityRef) {
+                    console.log('City changed to:', cityRef);
+                    
+                    // Clear warehouse
+                    this.clearSelect('nova-poshta-warehouse-admin-create');
+                    document.getElementById('nova-poshta-warehouse-admin-create').disabled = true;
+                    
+                    if (cityRef) {
+                        this.loadWarehouses(cityRef);
+                    }
+                },
+
+                loadWarehouses(cityRef) {
+                    fetch(`{{ route('api.nova-poshta.warehouses') }}?city_ref=${cityRef}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Warehouses response:', data);
+                            if (data.success) {
+                                this.populateSelect('nova-poshta-warehouse-admin-create', data.data);
+                                document.getElementById('nova-poshta-warehouse-admin-create').disabled = false;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading warehouses:', error);
+                        });
+                },
+
+                onWarehouseChange(warehouseRef) {
+                    console.log('Warehouse changed to:', warehouseRef);
+                },
+
+                populateSelect(selectId, data) {
+                    const select = document.getElementById(selectId);
+                    if (!select) return;
+                    
+                    // Clear existing options except the first one
+                    while (select.children.length > 1) {
+                        select.removeChild(select.lastChild);
+                    }
+                    
+                    // Add new options
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.ref;
+                        option.textContent = item.description_ru || item.description;
+                        select.appendChild(option);
+                    });
+                },
+
+                clearSelect(selectId) {
+                    const select = document.getElementById(selectId);
+                    if (!select) return;
+                    
+                    // Clear existing options except the first one
+                    while (select.children.length > 1) {
+                        select.removeChild(select.lastChild);
+                    }
+                    select.value = '';
                 },
             },
         });

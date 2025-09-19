@@ -267,7 +267,7 @@
 
                                         <p class="text-gray-600 dark:text-gray-300">
                                             <template v-if="address.address">
-                                                @{{ address.address.split('\n').join(', ') }},
+                                                @{{ address.address.split('\n').join(', ') }}<template v-if="address.warehouse">, @{{ address.warehouse }}</template>,
                                             </template>
 
                                             @{{ address.city }},

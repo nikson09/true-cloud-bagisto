@@ -138,7 +138,7 @@
                         </div>
 
                         <p class="mt-6 text-zinc-500 max-md:mt-5 max-md:text-sm">
-                            {{ $address->address }},
+                            {{ $address->address }}@if($address->warehouse) {{ $address->warehouse }}@endif,
 
                             {{ $address->city }}, 
                             {{ $address->state }}, {{ $address->country }}, 

@@ -73,4 +73,8 @@ import Debounce from "./directives/debounce";
 
 app.directive("debounce", Debounce);
 
+import vSelect from "vue3-select";
+import "vue3-select/dist/vue3-select.css";
+app.component("v-select", vSelect);
+
 export default app;

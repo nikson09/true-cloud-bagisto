@@ -1,6 +1,6 @@
 {
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-F65DyJd8.css",
+    "file": "assets/app-BFvU_BfY.css",
     "src": "src/Resources/assets/css/app.css",
     "isEntry": true
   },
@@ -35,6 +35,14 @@
   "src/Resources/assets/images/large-product-placeholder.webp": {
     "file": "assets/large-product-placeholder-B9xoAuKQ.webp",
     "src": "src/Resources/assets/images/large-product-placeholder.webp"
+  },
+  "src/Resources/assets/images/logo copy.png": {
+    "file": "assets/logo copy-CXmxgxTN.png",
+    "src": "src/Resources/assets/images/logo copy.png"
+  },
+  "src/Resources/assets/images/logo.png": {
+    "file": "assets/logo-BNCCrZue.png",
+    "src": "src/Resources/assets/images/logo.png"
   },
   "src/Resources/assets/images/logo.svg": {
     "file": "assets/logo-CZWQQgOF.svg",
@@ -81,12 +89,12 @@
     "src": "src/Resources/assets/images/wishlist.png"
   },
   "src/Resources/assets/js/app.js": {
-    "file": "assets/app-zmUk0CX0.js",
+    "file": "assets/app-7Y7w0hNL.js",
     "name": "app",
     "src": "src/Resources/assets/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-DsP8OK1c.css"
+      "assets/app-BBGAzHqx.css"
     ]
   }
 }

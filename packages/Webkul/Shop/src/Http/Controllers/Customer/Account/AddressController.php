@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Customer\Repositories\CustomerAddressRepository;
 use Webkul\Shop\Http\Controllers\Controller;
 use Webkul\Shop\Http\Requests\Customer\AddressRequest;
+use Illuminate\Support\Facades\Log;
 
 class AddressController extends Controller
 {
@@ -43,6 +44,7 @@ class AddressController extends Controller
      */
     public function store(AddressRequest $request)
     {
+        Log::info('store', $request->all());
         $customer = auth()->guard('customer')->user();
 
         Event::dispatch('customer.addresses.create.before');
@@ -60,6 +62,8 @@ class AddressController extends Controller
             'phone',
             'email',
             'default_address',
+            'area',
+            'warehouse',
         ]), [
             'customer_id' => $customer->id,
             'address'     => implode(PHP_EOL, array_filter($request->input('address'))),
